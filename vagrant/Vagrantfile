@@ -1,0 +1,28 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/trusty64"
+
+  # Expose Solr port 
+  config.vm.network :forwarded_port, guest: 8983, host: 8983 
+
+  config.vm.boot_timeout = 600
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.name = "solr-basic"
+    vb.memory = "2048"
+  end
+
+  # Provide tools
+  config.vm.provision "shell", path: "provision/install_tools.sh"
+
+  # Installs docker & docker-compose.
+  config.vm.provision "shell", inline: "cd /workspace/vagrant; /bin/bash ./install_docker.sh"
+
+  # Start docker containers.
+  config.vm.provision "shell", inline: "echo 'cd /workspace/solr; docker-compose up -d' >> ~/.bashrc"
+  
+  # Share the project between host and guest
+  config.vm.synced_folder "../", "/workspace", create: true
+end
