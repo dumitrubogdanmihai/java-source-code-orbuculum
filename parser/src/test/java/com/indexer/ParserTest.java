@@ -8,20 +8,13 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.CompilationUnit;
 
 public class ParserTest {
 	@Test
 	public void test() throws IOException {
 		String path = "src/test/java/com/indexer";
-		Stream<Node> stream = Parser.getNodesStream(path);
+		Stream<CompilationUnit> stream = Parser.getNodesStream(path);
 		assertThat(stream.count(), greaterThan(1L));
-	}
-	@Test
-	public void test1() throws IOException {
-		String path = "src/test/java/com/indexer";
-		Stream<Node> stream = Parser.getNodesStream(path);
-		assertThat(stream.filter(n -> n instanceof MethodDeclaration).count(), greaterThan(1L));
 	}
 }

@@ -41,12 +41,10 @@ public class Main {
 				core = input.get(coreIndex + 1);
 			}
 
-			String rootPath;  
+			String rootPath = ".";  
 			int rootPathIndex = input.indexOf("-path");
 			if (rootPathIndex != -1) {
 				rootPath = input.get(rootPathIndex + 1);
-			} else {
-				throw new IndexOutOfBoundsException("Missing path to index.");
 			}
 
 			Indexer indexer = new Indexer(host, port, core);

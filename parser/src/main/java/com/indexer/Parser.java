@@ -18,7 +18,7 @@ import com.github.javaparser.ast.Node;
 /**
  * Parse recursively and return a stream of abstract {@link Node}.
  */
-public class Parser {
+class Parser {
 
 	/**
 	 * Logger.
@@ -31,14 +31,13 @@ public class Parser {
 	 * @return			Stream of {@link Node}s
 	 * @throws IOException
 	 */
-	public static Stream<Node> getNodesStream(String rootPath) throws IOException {
+	public static Stream<CompilationUnit> getNodesStream(String rootPath) throws IOException {
 		return Files.walk(Paths.get(rootPath))
 				.map(Path::toFile)
 				.filter(File::isFile)
 				.filter(f -> f.getName().endsWith(".java"))
 				.map(f -> parse(f))
-				.filter(Objects::nonNull)
-				.flatMap(Parser::flatten);
+				.filter(Objects::nonNull);
 	}
 
 	/**
@@ -50,19 +49,8 @@ public class Parser {
 		try {
 			return JavaParser.parse(f);
 		} catch (Exception e) {
-			logger.warn(e);
+			logger.warn(e, e);
 		}
 		return null;
-	}
-
-	/**
-	 * Deep flatten.
-	 * @param node	Node with inner nodes.
-	 * @return		Flatten stream.
-	 */
-	private static Stream<Node> flatten(Node node) {
-		return Stream.concat(
-				Stream.of(node), 
-				node.getChildrenNodes().stream().flatMap(Parser::flatten));
 	}
 }
