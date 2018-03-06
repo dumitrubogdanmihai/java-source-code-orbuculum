@@ -15,7 +15,7 @@ public class Main {
 	/**
 	 * Indexer entrypoint.
 	 * 
-	 * @param args  Use like: "-host localhost -port 8983 -core java-source-code -path /path/to/index/
+	 * @param args  Use like: "-host localhost -port 8983 -core java-source-code -path /path/to/index"
 	 * @throws IOException 
 	 * @throws SolrServerException 
 	 */

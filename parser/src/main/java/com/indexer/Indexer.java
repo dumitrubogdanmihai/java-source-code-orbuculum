@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
 
 import com.github.javaparser.ast.CompilationUnit;
@@ -69,15 +70,16 @@ public class Indexer {
 		unit.getChildrenNodes().stream()
 		.filter(u -> u instanceof ClassOrInterfaceDeclaration)
 		.map(u -> (ClassOrInterfaceDeclaration) u)
-		.forEach(c -> index(unit, c));
+		.forEach(c -> index(new SolrInputDocument(), unit, c));
 	}
 
 	/**
 	 * Index a class.
-	 * @param unit		Compile unit.	
+	 * @param document 	Document to index.
+	 * @param unit		Compile unit. .jar file.
 	 * @param clazz		Class to index.
 	 */
-	private void index(CompilationUnit unit, ClassOrInterfaceDeclaration clazz) {
+	private void index(SolrInputDocument document, CompilationUnit unit, ClassOrInterfaceDeclaration clazz) {
 		List<Node> nodes = clazz.getChildrenNodes();
 		for (Node n : nodes) {
 			if (n instanceof MethodDeclaration) {
@@ -87,19 +89,21 @@ public class Indexer {
 					String className = clazz.getName();
 					String packageName = unit.getPackage().getName().toString();
 					
-					String id = packageName + "." + className;
-					
-					SolrInputDocument document = new SolrInputDocument();
+ 					String id = packageName + "." + className;
 					document.addField("id", id);
 					document.addField("method", methodName);
 					
 					solr.add(document);
-					solr.commit();
+					UpdateResponse response = solr.commit();
+					int status = response.getStatus();
+					if (status != 102) {
+						logger.warn(response);
+					}
 				} catch (Exception e) {
 					logger.warn(e, e);
 				}
 			} else if (n instanceof ClassOrInterfaceDeclaration) {
-				index(unit, (ClassOrInterfaceDeclaration) n);
+				index(document, unit, (ClassOrInterfaceDeclaration) n);
 			}
 		}
 	}
