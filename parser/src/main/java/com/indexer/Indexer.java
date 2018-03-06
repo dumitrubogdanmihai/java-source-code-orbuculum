@@ -1,7 +1,6 @@
 package com.indexer;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.log4j.LogManager;
@@ -26,7 +25,7 @@ public class Indexer {
 	 * Logger.
 	 */
 	private static final Logger logger = LogManager.getLogger(Indexer.class);
-	
+
 	/**
 	 * Client used to index documents.
 	 */
@@ -61,53 +60,50 @@ public class Indexer {
 		Stream<CompilationUnit> unitsStream = Parser.getNodesStream(rootPath);
 		unitsStream.forEach(u -> index(u));
 	}
-	
+
 	/**
-	 * Index a node element.
-	 * @param unit	Compile unit to index (extracted from a .java file).
+	 * Index a parsed java file as a {@link CompilationUnit}.
+	 * @param unit	Compilation unit to index.
 	 */
 	private void index(CompilationUnit unit) {
 		unit.getChildrenNodes().stream()
 		.filter(u -> u instanceof ClassOrInterfaceDeclaration)
 		.map(u -> (ClassOrInterfaceDeclaration) u)
-		.forEach(c -> index(new SolrInputDocument(), unit, c));
+		.forEach(c -> index(unit, c));
 	}
 
 	/**
 	 * Index a class.
-	 * @param document 	Document to index.
 	 * @param unit		Compile unit. .jar file.
 	 * @param clazz		Class to index.
 	 */
-	private void index(SolrInputDocument document, CompilationUnit unit, ClassOrInterfaceDeclaration clazz) {
-		List<Node> nodes = clazz.getChildrenNodes();
-		for (Node n : nodes) {
+	private void index(CompilationUnit unit, ClassOrInterfaceDeclaration clazz) {
+		SolrInputDocument document = new SolrInputDocument();
+		document.addField("id", IdProvider.getId(unit, clazz));
+
+		for (Node n : clazz.getChildrenNodes()) {
 			if (n instanceof MethodDeclaration) {
-				try {
-					MethodDeclaration method = (MethodDeclaration) n;
-					String methodName = method.getName();
-					String className = clazz.getName();
-					String packageName = unit.getPackage().getName().toString();
-					
- 					String id = packageName + "." + className;
-					document.addField("id", id);
-					document.addField("method", methodName);
-					
-					solr.add(document);
-					UpdateResponse response = solr.commit();
-					int status = response.getStatus();
-					if (status != 102) {
-						logger.warn(response);
-					}
-				} catch (Exception e) {
-					logger.warn(e, e);
-				}
+				MethodDeclaration method = (MethodDeclaration) n;
+				String methodName = method.getName();
+
+				document.addField("method", methodName);
 			} else if (n instanceof ClassOrInterfaceDeclaration) {
-				index(document, unit, (ClassOrInterfaceDeclaration) n);
+				index(unit, (ClassOrInterfaceDeclaration) n);
 			}
 		}
+
+		try {
+			solr.add(document);
+			UpdateResponse response = solr.commit();
+			int status = response.getStatus();
+			if (status != 102) {
+				logger.warn(response);
+			}
+		} catch (SolrServerException | IOException e) {
+			logger.warn(e, e);
+		}
 	}
-	
+
 	/**
 	 * Deep flatten.
 	 * @param node	Node with inner nodes.
@@ -115,8 +111,7 @@ public class Indexer {
 	 */
 	@SuppressWarnings("unused")
 	private static Stream<Node> flatten(Node node) {
-		return Stream.concat(
-				Stream.of(node), 
-				node.getChildrenNodes().stream().flatMap(Indexer::flatten));
+		Stream<Node> childStream = node.getChildrenNodes().stream().flatMap(Indexer::flatten);
+		return Stream.concat(Stream.of(node), childStream);
 	}
 }

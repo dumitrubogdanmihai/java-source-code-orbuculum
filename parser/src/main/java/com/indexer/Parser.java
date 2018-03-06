@@ -16,7 +16,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
 /**
- * Parse recursively and return a stream of abstract {@link Node}.
+ * Parse recursively and return a stream of {@link Node}.
  */
 class Parser {
 

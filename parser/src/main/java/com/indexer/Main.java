@@ -6,10 +6,8 @@ import java.util.List;
 
 import org.apache.solr.client.solrj.SolrServerException;
 
-import com.github.javaparser.ast.Node;
-
 /**
- * Parse recursively and return a stream of abstract {@link Node}.
+ * Index recursively java source code from a give directory..
  */
 public class Main {
 	/**
