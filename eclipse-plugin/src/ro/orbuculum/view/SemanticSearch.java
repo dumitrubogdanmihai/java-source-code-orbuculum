@@ -1,15 +1,24 @@
 package ro.orbuculum.view;
 
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.part.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.*;
-import org.eclipse.swt.widgets.Menu;
+import java.io.IOException;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleManager;
+import org.eclipse.ui.console.IOConsoleOutputStream;
+import org.eclipse.ui.console.MessageConsole;
+import org.eclipse.ui.part.ViewPart;
+
+import ro.orbuculum.indexer.Indexer;
 
 
 /**
@@ -36,135 +45,65 @@ public class SemanticSearch extends ViewPart {
 	 * The ID of the view as specified by the extension.
 	 */
 	public static final String ID = "ro.orbuculum.view.SemanticSearch";
+	private Button button;
 
-	private TableViewer viewer;
-	private Action action1;
-	private Action action2;
-	private Action doubleClickAction;
-	 
-
-	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
-		public String getColumnText(Object obj, int index) {
-			return getText(obj);
-		}
-		public Image getColumnImage(Object obj, int index) {
-			return getImage(obj);
-		}
-		public Image getImage(Object obj) {
-			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
-		}
-	}
-
-/**
+	/**
 	 * The constructor.
 	 */
 	public SemanticSearch() {
 	}
-
-	/**
-	 * This is a callback that will allow us
-	 * to create the viewer and initialize it.
-	 */
-	public void createPartControl(Composite parent) {
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		
-		viewer.setContentProvider(ArrayContentProvider.getInstance());
-		viewer.setInput(new String[] { "One", "Two", "Three" });
-	viewer.setLabelProvider(new ViewLabelProvider());
-
-		// Create the help context id for the viewer's control
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), "eclipse-plugin.viewer");
-		getSite().setSelectionProvider(viewer);
-		makeActions();
-		hookContextMenu();
-		hookDoubleClickAction();
-		contributeToActionBars();
-	}
-
-	private void hookContextMenu() {
-		MenuManager menuMgr = new MenuManager("#PopupMenu");
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				SemanticSearch.this.fillContextMenu(manager);
-			}
-		});
-		Menu menu = menuMgr.createContextMenu(viewer.getControl());
-		viewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(menuMgr, viewer);
-	}
-
-	private void contributeToActionBars() {
-		IActionBars bars = getViewSite().getActionBars();
-		fillLocalPullDown(bars.getMenuManager());
-		fillLocalToolBar(bars.getToolBarManager());
-	}
-
-	private void fillLocalPullDown(IMenuManager manager) {
-		manager.add(action1);
-		manager.add(new Separator());
-		manager.add(action2);
-	}
-
-	private void fillContextMenu(IMenuManager manager) {
-		manager.add(action1);
-		manager.add(action2);
-		// Other plug-ins can contribute there actions here
-		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-	}
 	
-	private void fillLocalToolBar(IToolBarManager manager) {
-		manager.add(action1);
-		manager.add(action2);
-	}
-
-	private void makeActions() {
-		action1 = new Action() {
-			public void run() {
-				showMessage("Action 1 executed");
-			}
-		};
-		action1.setText("Action 1");
-		action1.setToolTipText("Action 1 tooltip");
-		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+  private static MessageConsole findConsole(String name) {
+    ConsolePlugin plugin = ConsolePlugin.getDefault();
+    IConsoleManager conMan = plugin.getConsoleManager();
+    IConsole[] existing = conMan.getConsoles();
+    for (int i = 0; i < existing.length; i++) {
+    	if (name.equals(existing[i].getName())) {
+    		return (MessageConsole) existing[i];
+    	}
+    }
+    // No console found, so create a new one
+    MessageConsole myConsole = new MessageConsole(name, null);
+    conMan.addConsoles(new IConsole[]{myConsole});
+    return myConsole;
+ }
+	
+	@Override
+	public void createPartControl(Composite arg0) {
+		arg0.setLayout(new RowLayout());
 		
-		action2 = new Action() {
-			public void run() {
-				showMessage("Action 2 executed");
+		button = new Button(arg0, SWT.NONE);
+		button.setText("Update index");
+		button.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseUp(MouseEvent arg0) {
+				MessageConsole console = findConsole("Update index");
+				console.clearConsole();
+				console.activate();
+		    IOConsoleOutputStream outputStream = console.newOutputStream();
+				Indexer i = new Indexer(outputStream);
+				try {
+					i.indexJavaProjects();
+				} catch (CoreException | IOException e) {
+					e.printStackTrace();
+				}
 			}
-		};
-		action2.setText("Action 2");
-		action2.setToolTipText("Action 2 tooltip");
-		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-		doubleClickAction = new Action() {
-			public void run() {
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection)selection).getFirstElement();
-				showMessage("Double-click detected on "+obj.toString());
+			
+			@Override
+			public void mouseDown(MouseEvent arg0) {
 			}
-		};
-	}
-
-	private void hookDoubleClickAction() {
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				doubleClickAction.run();
+			
+			@Override
+			public void mouseDoubleClick(MouseEvent arg0) {
 			}
 		});
-	}
-	private void showMessage(String message) {
-		MessageDialog.openInformation(
-			viewer.getControl().getShell(),
-			"Semantic Search",
-			message);
+		
+		Label label = new Label(arg0, SWT.BOTTOM);
+		label.setText("Update current index for all opened projects...");
 	}
 
-	/**
-	 * Passing the focus request to the viewer's control.
-	 */
+	@Override
 	public void setFocus() {
-		viewer.getControl().setFocus();
+		button.setFocus();
 	}
 }

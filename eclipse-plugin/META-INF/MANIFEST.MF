@@ -5,6 +5,12 @@ Bundle-SymbolicName: eclipse-plugin;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: ro.orbuculum.activator.Activator
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.search;bundle-version="3.11.1",
+ org.eclipse.ui.console;bundle-version="3.6.201"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
+Import-Package: org.eclipse.core.resources,
+ org.eclipse.jdt.core,
+ org.eclipse.ui.ide,
+ org.eclipse.ui.texteditor
