@@ -31,7 +31,6 @@ public class Indexer {
 	    .baseUrl("http://localhost:8080")
 	    .build();
 		restApi = retrofit.create(RestApi.class);
-		
 		this.os = os;
 	}
 	

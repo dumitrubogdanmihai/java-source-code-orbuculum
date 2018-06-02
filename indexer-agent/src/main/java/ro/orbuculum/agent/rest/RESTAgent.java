@@ -2,7 +2,7 @@ package ro.orbuculum.agent.rest;
 
 import java.io.IOException;
 
-import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
@@ -13,7 +13,7 @@ import ro.orbuculum.agent.indexer.Indexer;
 
 @Path("/api/agent")
 public class RESTAgent {
-	@GET
+	@POST
 	@Path("index")
 	public Response index (
 			@QueryParam("path") String path) 
