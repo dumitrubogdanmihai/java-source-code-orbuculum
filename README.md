@@ -3,7 +3,8 @@
 Java source code search engine that allow to execute complex queries against indexed files.
 
 ## Prerequisites
-* Vagrant
+* Maven
+* Docker
 
 ## License
 
