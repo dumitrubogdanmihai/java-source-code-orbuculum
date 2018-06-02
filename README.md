@@ -8,4 +8,4 @@ Java source code search engine that allow to execute complex queries against ind
 
 ## License
 
-This project is licensed under the MIT License \([LICENSE.md](LICENSE.md)\).
+This project is licensed under the MIT License \([LICENSE.md](LICENSE)\).
