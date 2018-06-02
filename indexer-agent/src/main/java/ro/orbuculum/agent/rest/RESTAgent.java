@@ -16,10 +16,10 @@ public class RESTAgent {
 	@GET
 	@Path("index")
 	public Response index (
-			@QueryParam("repositoryUrl") String repositoryPath) 
+			@QueryParam("path") String path) 
 					throws SolrServerException, IOException {
 		Indexer indexer = new Indexer("8983", "java-source-code");
-		indexer.indexAll(repositoryPath);
+		indexer.indexAll(path);
 		return Response.ok().build();
 	}
 }

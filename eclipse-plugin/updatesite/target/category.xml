@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/ro.orbuculum.feature_1.0.0.qualifier.jar" id="ro.orbuculum.feature" version="1.0.0.qualifier"/>
+</site>
