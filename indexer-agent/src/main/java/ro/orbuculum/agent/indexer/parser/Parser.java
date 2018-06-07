@@ -1,4 +1,4 @@
-package ro.orbuculum.agent.parser;
+package ro.orbuculum.agent.indexer.parser;
 
 import java.io.File;
 import java.io.IOException;

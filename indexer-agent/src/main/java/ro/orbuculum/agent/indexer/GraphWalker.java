@@ -14,7 +14,7 @@ import com.github.javaparser.ast.Node;
 
 import ro.orbuculum.agent.indexer.handler.Handler;
 import ro.orbuculum.agent.indexer.handler.unit.CompilationUnitHandler;
-import ro.orbuculum.agent.parser.Parser;
+import ro.orbuculum.agent.indexer.parser.Parser;
 
 /**
  * Index Java sources to Solr.

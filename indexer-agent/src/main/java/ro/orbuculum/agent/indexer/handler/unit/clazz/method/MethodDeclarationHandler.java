@@ -49,8 +49,10 @@ public class MethodDeclarationHandler implements Handler {
 			document.addField("method-q-name", getId(method));
 			document.addField("method-raw", method.toString());
 			document.addField("class", ClassOrInterfaceDeclarationHandler.getId(compilationUnit, classDecl));
-			for (Parameter param : method.getParameters()) {
-				document.addField("parameter", resolveParameter(param));
+			if (method.getParameters() != null) {
+				for (Parameter param : method.getParameters()) {
+					document.addField("parameter", resolveParameter(param));
+				}
 			}
 			document.addField("javadoc", method.getJavaDoc());
 			document.addField("offset", method.getBeginLine());

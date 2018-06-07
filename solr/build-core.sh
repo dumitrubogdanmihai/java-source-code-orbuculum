@@ -3,8 +3,8 @@
 
 docker-compose up -d orbuculum
 
-docker-compose exec orbuculum bash /opt/solr/bin/solr delete -c orbuculum
-docker-compose exec orbuculum bash /opt/solr/bin/solr create -c orbuculum
+docker-compose exec -T orbuculum bash /opt/solr/bin/solr delete -c orbuculum
+docker-compose exec -T orbuculum bash /opt/solr/bin/solr create -c orbuculum
 
 curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"class", "type":"text_general", "multiValued":false, "stored":true}}' http://localhost:8983/solr/orbuculum/schema
 curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"method", "type":"text_general", "multiValued":false, "stored":true}}' http://localhost:8983/solr/orbuculum/schema
@@ -17,3 +17,6 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"n
 curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"comment", "type":"text_general", "multiValued":true, "stored":false}}' http://localhost:8983/solr/orbuculum/schema
 curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"object", "type":"text_general", "multiValued":true, "stored":false}}' http://localhost:8983/solr/orbuculum/schema
 curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"method-call", "type":"text_general", "multiValued":true, "stored":false}}' http://localhost:8983/solr/orbuculum/schema
+
+docker-compose stop orbuculum
+
