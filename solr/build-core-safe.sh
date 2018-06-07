@@ -1,5 +1,5 @@
 #!/bin/bash
-# Those commands must be executed with the server running and, because of that the, image cannot be built with just a a Dockerfile.
+# Those commands must be executed with the server running and, because of that, the image cannot be built with just a a Dockerfile.
 
 docker-compose up -d orbuculum
 
