@@ -3,6 +3,7 @@ package ro.orbuculum.search.querent;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +23,7 @@ public class TestQuerent {
 		result.setName("nume");
 		result.setNumFound(1);
 		result.setStart(1);
-		result.setFields(fields);
+		result.setDocs(Arrays.asList(fields));
 		String marshall = Unmarshaller.marshall(result);
 		assertEquals(
 			"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" + 
@@ -34,7 +35,6 @@ public class TestQuerent {
 			"", marshall);
 	}
 
-
 	@Test
 	public void testUnmarshal() throws InterruptedException, IOException, JAXBException {
 		String xml = 
@@ -44,7 +44,7 @@ public class TestQuerent {
 				"</response>\n";
 		Result result = Unmarshaller.unmarshall(xml);
 		assertEquals("response", result.getName());
-		assertEquals(null, result.getFields());
+		assertEquals(null, result.getDocs());
 	}
 
 	@Test
@@ -63,8 +63,10 @@ public class TestQuerent {
 				"</response>\n";
 		Result result = Unmarshaller.unmarshall(xml);
 		assertEquals("response", result.getName());
-		assertEquals(5, result.getFields().size());
+		assertEquals(1, result.getDocs().size());
+		assertEquals(5, result.getDocs().get(0).size());
 	}
+	
 	@Test
 	public void testUnmarshal2() throws InterruptedException, IOException, JAXBException {
 		String xml = 
@@ -88,6 +90,7 @@ public class TestQuerent {
 				"</response>\n";
 		Result result = Unmarshaller.unmarshall(xml);
 		assertEquals(Integer.valueOf(2), result.getNumFound());
-		assertEquals(5, result.getFields().size());
+		assertEquals(2, result.getDocs().size());
+		assertEquals(5, result.getDocs().get(0).size());
 	}
 }

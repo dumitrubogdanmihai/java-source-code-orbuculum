@@ -22,7 +22,6 @@ public class Unmarshaller {
 		return sw.toString();
 	}
 	
-	
 	public static Result unmarshall(String xml) throws JAXBException {
 		Result toReturn = null;
 		JAXBContext newInstance = JAXBContext.newInstance(Response.class);

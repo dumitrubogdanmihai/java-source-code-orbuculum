@@ -1,5 +1,6 @@
 package ro.orbuculum.search.querent.jaxb;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -9,18 +10,18 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlRootElement
 public class Result {
-	private	Map<String, String> fields;
+	private	List<Map<String, String>> docs;
 	private String name;
 	private	Integer numFound;
 	private	Integer start;
 
 	@XmlElement(name="doc")
 	@XmlJavaTypeAdapter(MapAdapter.class)
-	public Map<String, String> getFields() {
-		return fields;
+	public List<Map<String, String>> getDocs() {
+		return docs;
 	}
-	public void setFields(Map<String, String> fields) {
-		this.fields = fields;
+	public void setDocs(List<Map<String, String>> docs) {
+		this.docs = docs;
 	}
 	@XmlAttribute
 	public String getName() {
