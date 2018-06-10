@@ -3,8 +3,10 @@ package ro.orbuculum.search;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -34,6 +36,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
+
+import ro.orbuculum.search.querent.api.Fields;
 
 public class SearchResultPage implements ISearchResultPage, ISearchResultListener {
 
@@ -77,22 +81,30 @@ public class SearchResultPage implements ISearchResultPage, ISearchResultListene
 			public void doubleClick(DoubleClickEvent event) {
 				ISelection selection = viewer.getSelection();
 				ro.orbuculum.search.SearchResultEntity entity = (SearchResultEntity) ((IStructuredSelection)selection).getFirstElement();
-				System.err.println("Double-click detected on " + entity.getMethod() + " " + entity.getPath());
+				System.err.println("Double-click detected on " + entity.get(Fields.CLASS));
 				try {
-					
-					IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(entity.getPath()));
+					entity.get(Fields.PATH);
+					IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(entity.get(Fields.PROJECT));
+					IFile file = project.getFile(entity.get(Fields.PATH));
 					IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-					AbstractTextEditor openEditor = (AbstractTextEditor) IDE.openEditor(activePage, file);
-					openEditor.selectAndReveal(0, 20);
 					
-//					openEditor.getEditorSite().getSelectionProvider().setSelection(new ITextSelec);;
+					AbstractTextEditor editor = (AbstractTextEditor) IDE.openEditor(activePage, file);
+					IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+					int from = Integer.parseInt(entity.get(Fields.OFFSET_START));
+					int end = Integer.parseInt(entity.get(Fields.OFFSET_END));
+					try {
+						int startOffset = document.getLineOffset(from - 1);
+						int endOffset = document.getLineOffset(end) - 1;
+						editor.selectAndReveal(startOffset, endOffset - startOffset);
+					} catch (BadLocationException e) {
+						e.printStackTrace();
+					}
 				} catch (PartInitException e) {
 					e.printStackTrace();
 				}
 			}
 		});
 	}
-
 	private void createColumns() {
 		TableViewerColumn colFirstName = new TableViewerColumn(viewer,  SWT.NONE, 0);
 		colFirstName.getColumn().setWidth(200);
@@ -101,7 +113,7 @@ public class SearchResultPage implements ISearchResultPage, ISearchResultListene
 			@Override
 			public String getText(Object element) {
 				SearchResultEntity entity = (SearchResultEntity) element;
-				return entity.getClazz();
+				return entity.get(Fields.CLASS);
 			}
 		});
 
@@ -112,7 +124,7 @@ public class SearchResultPage implements ISearchResultPage, ISearchResultListene
 			@Override
 			public String getText(Object element) {
 				SearchResultEntity entity = (SearchResultEntity) element;
-				return entity.getMethod();
+				return entity.get(Fields.METHOD);
 			}
 		});
 	}

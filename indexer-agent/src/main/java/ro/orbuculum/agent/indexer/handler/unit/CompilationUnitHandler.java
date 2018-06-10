@@ -1,5 +1,6 @@
 package ro.orbuculum.agent.indexer.handler.unit;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,6 +14,13 @@ import ro.orbuculum.agent.indexer.handler.unit.clazz.ClassOrInterfaceDeclaration
 
 public class CompilationUnitHandler implements Handler {
 	private CompilationUnit compilationUnit;
+	private File projectDir;
+	private File sourcesDir;
+
+	public CompilationUnitHandler(File projectDir, File sourcesDir) {
+		this.projectDir = projectDir;
+		this.sourcesDir = sourcesDir;
+	}
 
 	@Override
 	public boolean handle(Node node) {
@@ -26,7 +34,7 @@ public class CompilationUnitHandler implements Handler {
 
 	@Override
 	public List<Handler> getChildrenHandlers() {
-		return Arrays.asList(new ClassOrInterfaceDeclarationHandler(compilationUnit));
+		return Arrays.asList(new ClassOrInterfaceDeclarationHandler(projectDir, sourcesDir, compilationUnit));
 	}
 
 	@Override

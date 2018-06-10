@@ -51,9 +51,9 @@ public class GraphWalker {
 	 * @throws SolrServerException
 	 * @throws IOException
 	 */
-	public void index(String path) throws SolrServerException, IOException {
-		CompilationUnit unit = Parser.parse(new File(path));
-		index(unit, Arrays.asList(new CompilationUnitHandler()));
+	public void index(File projectDir, File javaResource) throws SolrServerException, IOException {
+		CompilationUnit unit = Parser.parse(javaResource);
+		index(unit, Arrays.asList(new CompilationUnitHandler(projectDir, javaResource)));
 	}
 
 	/**

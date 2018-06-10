@@ -4,7 +4,7 @@ import retrofit2.Call;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
-public interface RestApi {
+public interface IndexerAgentApi {
   @POST("/api/agent/index")
-  Call<Void> index(@Query("path") String path);
+  Call<Void> index(@Query("projectPath") String projectPath);
 }

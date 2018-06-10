@@ -66,6 +66,7 @@
 						</goals>
 						<phase>process-resources</phase>
 						<configuration>
+			              <classifier>sources</classifier>
 							<includeScope>runtime</includeScope>
 						</configuration>
 					</execution>

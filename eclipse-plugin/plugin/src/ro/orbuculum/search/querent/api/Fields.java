@@ -1,20 +1,26 @@
 package ro.orbuculum.search.querent.api;
 
 public enum Fields {
-	METHOD("method", false, true),
-	METHOD_Q_NAME("method-q-name", false, true),
-	METHOD_RAW ("method-raw", false, false),
-	parameter("parameter", true, true),
-	JAVADOC("javadoc", false, false),
-	OFFSET("offset", false, true),
-	JAVA_KEYWORD("java-keyword", true, false),
-	COMMENT("comment", true, false),
-	OBJECT("object", true, false),
-	METHOD_CALL("method-call", true, false);
+	PROJECT("project", true, false),
+	PATH("path", true, false),
+	CLASS("class", true, false),
+	METHOD("method", true, false),
+	METHOD_Q_NAME("method-q-name", true, false),
+	METHOD_RAW("method-raw", true, false),
+	PARAMETER("parameter", true, true),
+	OFFSET_START("offset-start", true, false),
+	OFFSET_END("offset-end", true, false),
+	ID("id", true, false);
 	
 	private String name;
 	private boolean multivalue;
 	private boolean stored;
+	
+	@Override
+	public String toString() {
+		return this.getName();
+	}
+	
 	Fields(String name, boolean multivalue, boolean stored) {
 		this.setName(name);
 		this.setMultivalue(multivalue);

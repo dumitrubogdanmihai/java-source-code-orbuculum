@@ -9,16 +9,21 @@ sleep 2
 docker-compose exec -T orbuculum bash /opt/solr/bin/solr create -c orbuculum
 sleep 2
 
+curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"project", "type":"text_general", "multiValued":false, "stored":true}}' http://localhost:8983/solr/orbuculum/schema
+curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"path", "type":"text_general", "multiValued":false, "stored":true}}' http://localhost:8983/solr/orbuculum/schema
 curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"class", "type":"text_general", "multiValued":false, "stored":true}}' http://localhost:8983/solr/orbuculum/schema
 curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"method", "type":"text_general", "multiValued":false, "stored":true}}' http://localhost:8983/solr/orbuculum/schema
 curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"method-q-name", "type":"text_general", "multiValued":false, "stored":true}}' http://localhost:8983/solr/orbuculum/schema
-curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"method-raw", "type":"text_general", "multiValued":false, "stored":false}}' http://localhost:8983/solr/orbuculum/schema
+curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"method-raw", "type":"text_general", "multiValued":false, "stored":true}}' http://localhost:8983/solr/orbuculum/schema
 curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"parameter", "type":"text_general", "multiValued":true, "stored":true}}' http://localhost:8983/solr/orbuculum/schema
-curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"javadoc", "type":"text_general", "multiValued":false, "stored":false}}' http://localhost:8983/solr/orbuculum/schema
-curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"offset", "type":"text_general", "multiValued":false, "stored":true}}' http://localhost:8983/solr/orbuculum/schema
-curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"java-keyword", "type":"text_general", "multiValued":true, "stored":false}}' http://localhost:8983/solr/orbuculum/schema
-curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"comment", "type":"text_general", "multiValued":true, "stored":false}}' http://localhost:8983/solr/orbuculum/schema
-curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"object", "type":"text_general", "multiValued":true, "stored":false}}' http://localhost:8983/solr/orbuculum/schema
-curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"method-call", "type":"text_general", "multiValued":true, "stored":false}}' http://localhost:8983/solr/orbuculum/schema
+curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"javadoc", "type":"text_general", "multiValued":false, "stored":true}}' http://localhost:8983/solr/orbuculum/schema
+curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"offset-start", "type":"text_general", "multiValued":false, "stored":true}}' http://localhost:8983/solr/orbuculum/schema
+curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"offset-end", "type":"text_general", "multiValued":false, "stored":true}}' http://localhost:8983/solr/orbuculum/schema
+curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"java-keyword", "type":"text_general", "multiValued":true, "stored":true}}' http://localhost:8983/solr/orbuculum/schema
+curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"comment", "type":"text_general", "multiValued":true, "stored":true}}' http://localhost:8983/solr/orbuculum/schema
+curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"object", "type":"text_general", "multiValued":true, "stored":true}}' http://localhost:8983/solr/orbuculum/schema
+curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"method-call", "type":"text_general", "multiValued":true, "stored":true}}' http://localhost:8983/solr/orbuculum/schema
+
+sleep 1
 
 docker-compose stop orbuculum

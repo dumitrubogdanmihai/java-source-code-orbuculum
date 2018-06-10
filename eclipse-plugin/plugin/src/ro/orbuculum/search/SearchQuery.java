@@ -10,8 +10,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 
-import ro.orbuculum.search.querent.api.ApiImpl;
-import ro.orbuculum.search.querent.api.Fields;
+import ro.orbuculum.search.querent.api.Solr;
 
 public class SearchQuery implements ISearchQuery {
 
@@ -23,20 +22,19 @@ public class SearchQuery implements ISearchQuery {
 		this.searchResult = new SearchResult(this);
 	}
 
+	public static SearchResultEntity convert(Map<String, String> docFields) {
+		return new SearchResultEntity(docFields);
+
+	}
+
 	@Override
 	public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
-		String q = "*:" + (text != null ? text : "*"); 
-		ApiImpl.get(q, r -> {
-			System.err.println(r);
+		String q = "*:" + (text != null && !text.isEmpty() ? text : "*");
+		Solr.get(q, r -> {
 			if (r != null) {
 				List<Map<String, String>> docs = r.getDocs();
 				docs.stream().forEach(docFields -> {
-					searchResult.addEntity(new SearchResultEntity(
-							docFields.get(Fields.OBJECT.getName()),
-							docFields.get(Fields.METHOD.getName()),
-							"playground2/src/main/java/" + docFields.get(Fields.OBJECT.getName()) + ".java",
-							Integer.parseInt(docFields.get(Fields.OFFSET.getName())),
-							Integer.parseInt(docFields.get(Fields.OFFSET.getName())) + 10));
+					searchResult.addEntity(convert(docFields));
 				});
 			}
 		});
@@ -45,7 +43,6 @@ public class SearchQuery implements ISearchQuery {
 
 	@Override
 	public ISearchResult getSearchResult() {
-		System.err.println("getSearchResult");
 		return searchResult;
 	}
 

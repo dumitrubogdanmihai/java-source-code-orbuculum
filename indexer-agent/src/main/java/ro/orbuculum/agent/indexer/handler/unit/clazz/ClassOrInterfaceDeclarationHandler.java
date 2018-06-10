@@ -1,5 +1,6 @@
 package ro.orbuculum.agent.indexer.handler.unit.clazz;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,8 +17,12 @@ import ro.orbuculum.agent.indexer.handler.unit.clazz.method.MethodDeclarationHan
 public class ClassOrInterfaceDeclarationHandler implements Handler {
 	private ClassOrInterfaceDeclaration classDeclaration;
 	private CompilationUnit compilationUnit;
+	private File projectDir;
+	private File sourcesDir;
 
-	public ClassOrInterfaceDeclarationHandler(CompilationUnit compilationUnit) {
+	public ClassOrInterfaceDeclarationHandler(File projectDir, File sourcesDir, CompilationUnit compilationUnit) {
+		this.projectDir = projectDir;
+		this.sourcesDir = sourcesDir;
 		this.compilationUnit = compilationUnit;
 	}
 	
@@ -33,7 +38,7 @@ public class ClassOrInterfaceDeclarationHandler implements Handler {
 
 	@Override
 	public List<Handler> getChildrenHandlers() {
-		return Arrays.asList(new MethodDeclarationHandler(compilationUnit, classDeclaration));
+		return Arrays.asList(new MethodDeclarationHandler(projectDir, sourcesDir, compilationUnit, classDeclaration));
 	}
 
 	@Override

@@ -5,9 +5,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 import ro.orbuculum.search.querent.jaxb.Result;
 
-public interface Api {
+public interface SolrApi {
 	@GET("select?wt=xml")
-	Call<Result> getDocuments(@Query("q") String q);
-	@GET("select?wt=xml&q=*:*")
-	Call<Result> getDocuments();
+	Call<Result> getDocuments(@Query(value = "q") String q);
 }

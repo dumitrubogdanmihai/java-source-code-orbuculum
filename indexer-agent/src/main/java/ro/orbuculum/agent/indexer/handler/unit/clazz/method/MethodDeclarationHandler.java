@@ -1,5 +1,6 @@
 package ro.orbuculum.agent.indexer.handler.unit.clazz.method;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -33,29 +34,38 @@ public class MethodDeclarationHandler implements Handler {
 	private SolrInputDocument document;
 	private CompilationUnit compilationUnit;
 	private ClassOrInterfaceDeclaration classDecl;
+	private File projectDir;
+	private File sourcesDir;
 
 	public MethodDeclarationHandler(
+			File projectDir, 
+			File sourcesDir, 
 			CompilationUnit cu, 
 			ClassOrInterfaceDeclaration classDecl) {
+		this.projectDir = projectDir;
 		this.compilationUnit = cu;
 		this.classDecl = classDecl;
+		this.sourcesDir = sourcesDir;
 	}
 	@Override
 	public boolean handle(Node node) {
 		if (node instanceof  MethodDeclaration) {
 			MethodDeclaration method = (MethodDeclaration) node;
 			document = new SolrInputDocument();
+			document.addField("project", projectDir.getName());
+			document.addField("path", projectDir.toURI().relativize(sourcesDir.toURI()).getPath());
+			document.addField("class", ClassOrInterfaceDeclarationHandler.getId(compilationUnit, classDecl));
 			document.addField("method", method.getName());
 			document.addField("method-q-name", getId(method));
 			document.addField("method-raw", method.toString());
-			document.addField("class", ClassOrInterfaceDeclarationHandler.getId(compilationUnit, classDecl));
 			if (method.getParameters() != null) {
 				for (Parameter param : method.getParameters()) {
 					document.addField("parameter", resolveParameter(param));
 				}
 			}
 			document.addField("javadoc", method.getJavaDoc());
-			document.addField("offset", method.getBeginLine());
+			document.addField("offset-start", method.getBeginLine());
+			document.addField("offset-end", method.getEndLine());
 			return true;
 		} else {
 			return false;
