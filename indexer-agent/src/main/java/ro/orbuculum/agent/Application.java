@@ -5,15 +5,28 @@ import java.util.Set;
 
 import ro.orbuculum.agent.rest.RESTIndexer;
 
+/**
+ * Define components.
+ * 
+ * @author bogdan
+ */
 public class Application extends javax.ws.rs.core.Application {
-	private Set<Object> singletons = new HashSet<>();
-	
-	public Application() {
-		singletons.add(new RESTIndexer());
-	}
-	
-	@Override
-	public Set<Object> getSingletons() {
-		return singletons;
-	}
+  
+  /**
+   * End-points set.
+   */
+  private Set<Object> singletons = new HashSet<>();
+
+  
+  /**
+   * Constructor.
+   */
+  public Application() {
+    singletons.add(new RESTIndexer());
+  }
+
+  @Override
+  public Set<Object> getSingletons() {
+    return singletons;
+  }
 }

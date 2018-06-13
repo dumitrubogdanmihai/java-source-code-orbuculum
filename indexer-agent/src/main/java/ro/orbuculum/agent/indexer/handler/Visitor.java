@@ -6,8 +6,8 @@ import org.apache.solr.client.solrj.SolrClient;
 
 import com.github.javaparser.ast.Node;
 
-public interface Handler {
-	boolean handle(Node node);
-	List<Handler> getChildrenHandlers();
-	void commit(SolrClient client);
+public interface Visitor {
+	boolean visit(Node node);
+	List<Visitor> getChildrenVisitors();
+	default void commit(SolrClient client) {}
 }

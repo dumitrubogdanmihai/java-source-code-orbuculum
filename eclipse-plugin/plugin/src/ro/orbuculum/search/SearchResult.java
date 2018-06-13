@@ -2,6 +2,7 @@ package ro.orbuculum.search;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -9,22 +10,49 @@ import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
 
+/**
+ * Retrieved Solr documents representation.
+ * @author bogdan
+ *
+ */
 public class SearchResult implements ISearchResult {
 
+  /**
+   * Search query.
+   */
 	private final ISearchQuery query;
+	
+	/**
+	 * Listeners.
+	 */
 	private final ListenerList<ISearchResultListener> listeners = new ListenerList<>();
 	
-	private final Collection<SearchResultEntity> result = new ArrayList<>();
+	/**
+	 * List of retrieved entities.
+	 */
+	private final List<SearchResultEntity> result = new ArrayList<>();
 	
+	/**
+	 * Constructor.
+	 * @param query  The query.
+	 */
 	public SearchResult(ISearchQuery query) {
 		this.query = query;
 	}
 	
+	/**
+	 * Add a entity.
+	 * @param entity The entity.
+	 */
 	public void addEntity(SearchResultEntity entity) {
 		getResult().add(entity);
 		notifyListeners(entity);
 	}
 
+	/**
+	 * Notify,
+	 * @param f entity.
+	 */
 	private void notifyListeners(SearchResultEntity f) {
 		SearchResultEvent event = new SearchResultEvent(this, f);
 		for (Object listener : listeners.getListeners()) {
@@ -32,6 +60,13 @@ public class SearchResult implements ISearchResult {
 		}
 	}
 
+	/**
+	 * @return Get retrieved results.
+	 */
+  public Collection<SearchResultEntity> getResult() {
+    return result;
+  }
+  
 	@Override
 	public void addListener(ISearchResultListener arg0) {
 		listeners.add(arg0);
@@ -60,9 +95,5 @@ public class SearchResult implements ISearchResult {
 	@Override
 	public void removeListener(ISearchResultListener arg0) {
 		listeners.remove(arg0);
-	}
-
-	public Collection<SearchResultEntity> getResult() {
-		return result;
 	}
 }

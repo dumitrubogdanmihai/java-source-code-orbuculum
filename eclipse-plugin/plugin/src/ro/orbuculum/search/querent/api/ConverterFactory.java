@@ -6,8 +6,16 @@ import java.lang.reflect.Type;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
 
-final class ConverterFactory extends Converter.Factory {
+/**
+ * HTTP response converter.
+ * 
+ * @author bogdan
+ */
+class ConverterFactory extends Converter.Factory {
 
+  /**
+   * @return converter.
+   */
 	public static ConverterFactory create() {
 		return new ConverterFactory();
 	}

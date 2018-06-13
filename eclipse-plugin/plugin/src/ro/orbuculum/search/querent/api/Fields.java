@@ -1,5 +1,10 @@
 package ro.orbuculum.search.querent.api;
 
+/**
+ * Solr document fields defined in schema.xml
+ * 
+ * @author bogdan
+ */
 public enum Fields {
 	PROJECT("project", true, false),
 	PATH("path", true, false),

@@ -8,11 +8,26 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import org.eclipse.core.runtime.Status;
+
+import ro.orbuculum.Activator;
 import ro.orbuculum.search.querent.jaxb.Response;
 import ro.orbuculum.search.querent.jaxb.Result;
 
+/**
+ * Unmarshaller for the Solr response.
+ * 
+ * @author bogdan
+ */
 public class Unmarshaller {
-
+  /**
+   * Marshal result. May be used for test purposes.
+   * @param result  The result.
+   * 
+   * @return  XML document.
+   * 
+   * @throws JAXBException
+   */
 	public static String marshall(Result result) throws JAXBException {
 		StringWriter sw = new StringWriter();
 		JAXBContext newInstance = JAXBContext.newInstance(Response.class);
@@ -22,7 +37,14 @@ public class Unmarshaller {
 		return sw.toString();
 	}
 	
-	public static Result unmarshall(String xml) throws JAXBException {
+	/**
+	 * Unmarshal the raw XML document.
+	 * 
+	 * @param Raw XML response.
+	 * @return
+	 * @throws JAXBException
+	 */
+	public static Result unmarshal(String xml) throws JAXBException {
 		Result toReturn = null;
 		JAXBContext newInstance = JAXBContext.newInstance(Response.class);
 		javax.xml.bind.Unmarshaller unmarshaller = newInstance.createUnmarshaller();
@@ -36,9 +58,9 @@ public class Unmarshaller {
 			if (is != null) {
 				try {
 					is.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				} catch (IOException e) {  
+				  Activator.getDefault().getLog().log(new Status(Status.ERROR, Activator.PLUGIN_ID, e.toString(), e)); 
+        }
 			}
 		}
 		

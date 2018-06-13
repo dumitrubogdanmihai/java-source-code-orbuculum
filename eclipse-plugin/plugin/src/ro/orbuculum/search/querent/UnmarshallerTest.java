@@ -13,7 +13,8 @@ import org.junit.Test;
 
 import ro.orbuculum.search.querent.jaxb.Result;
 
-public class TestQuerent {
+
+public class UnmarshallerTest {
 
 	@Test
 	public void testMarshall() throws JAXBException {
@@ -42,7 +43,7 @@ public class TestQuerent {
 				"<result name=\"response\" numFound=\"0\" start=\"0\">\n" + 
 				"</result>\n"+
 				"</response>\n";
-		Result result = Unmarshaller.unmarshall(xml);
+		Result result = Unmarshaller.unmarshal(xml);
 		assertEquals("response", result.getName());
 		assertEquals(null, result.getDocs());
 	}
@@ -61,7 +62,7 @@ public class TestQuerent {
 				"</doc>\n" + 
 				"</result>\n"+
 				"</response>\n";
-		Result result = Unmarshaller.unmarshall(xml);
+		Result result = Unmarshaller.unmarshal(xml);
 		assertEquals("response", result.getName());
 		assertEquals(1, result.getDocs().size());
 		assertEquals(5, result.getDocs().get(0).size());
@@ -88,7 +89,7 @@ public class TestQuerent {
 				"</doc>\n" + 
 				"</result>\n"+
 				"</response>\n";
-		Result result = Unmarshaller.unmarshall(xml);
+		Result result = Unmarshaller.unmarshal(xml);
 		assertEquals(Integer.valueOf(2), result.getNumFound());
 		assertEquals(2, result.getDocs().size());
 		assertEquals(5, result.getDocs().get(0).size());

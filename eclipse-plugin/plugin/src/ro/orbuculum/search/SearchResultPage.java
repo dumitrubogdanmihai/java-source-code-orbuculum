@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -37,178 +38,209 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
+import ro.orbuculum.Activator;
 import ro.orbuculum.search.querent.api.Fields;
 
+/**
+ * Page where search results are presented.
+ *  
+ * @author bogdan
+ */
 public class SearchResultPage implements ISearchResultPage, ISearchResultListener {
 
-	private String id;
-	private Composite rootControl;
-	private IPageSite site;
-	private TableViewer viewer;
-	private SearchResult searchResult;
+  /**
+   * Some id.
+   */
+  private String id;
 
-	@Override
-	public void createControl(Composite parent) {
-		this.rootControl = new Composite(parent, SWT.NULL);
-		this.rootControl.setLayout(new FillLayout());
+  /**
+   * Composite.
+   */
+  private Composite rootControl;
 
-		viewer = new TableViewer(rootControl, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		createColumns();
-		createControl();
+  /**
+   * Site.
+   */
+  private IPageSite site;
 
-		//make lines and header visible
-		final Table table = viewer.getTable();
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
+  /**
+   * Table where results are presented.
+   */
+  private TableViewer viewer;
 
-		viewer.setContentProvider(new ArrayContentProvider());
-		// make the selection available to other views
-		getSite().setSelectionProvider(viewer);
-	}
-	
-	private void createControl() {
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection selection = viewer.getStructuredSelection();
-				Object firstElement = selection.getFirstElement();
-				System.err.println("selection:"+selection + " " + firstElement);
-			}
-		});
-		
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				ISelection selection = viewer.getSelection();
-				ro.orbuculum.search.SearchResultEntity entity = (SearchResultEntity) ((IStructuredSelection)selection).getFirstElement();
-				System.err.println("Double-click detected on " + entity.get(Fields.CLASS));
-				try {
-					entity.get(Fields.PATH);
-					IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(entity.get(Fields.PROJECT));
-					IFile file = project.getFile(entity.get(Fields.PATH));
-					IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-					
-					AbstractTextEditor editor = (AbstractTextEditor) IDE.openEditor(activePage, file);
-					IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
-					int from = Integer.parseInt(entity.get(Fields.OFFSET_START));
-					int end = Integer.parseInt(entity.get(Fields.OFFSET_END));
-					try {
-						int startOffset = document.getLineOffset(from - 1);
-						int endOffset = document.getLineOffset(end) - 1;
-						editor.selectAndReveal(startOffset, endOffset - startOffset);
-					} catch (BadLocationException e) {
-						e.printStackTrace();
-					}
-				} catch (PartInitException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	private void createColumns() {
-		TableViewerColumn colFirstName = new TableViewerColumn(viewer,  SWT.NONE, 0);
-		colFirstName.getColumn().setWidth(200);
-		colFirstName.getColumn().setText("Clasa");
-		colFirstName.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				SearchResultEntity entity = (SearchResultEntity) element;
-				return entity.get(Fields.CLASS);
-			}
-		});
+  /**
+   * Retrieved result containing indexed Solr documents.
+   */
+  private SearchResult searchResult;
 
-		TableViewerColumn colSecondName = new TableViewerColumn(viewer,  SWT.NONE, 1);
-		colSecondName.getColumn().setWidth(200);
-		colSecondName.getColumn().setText("Metoda");
-		colSecondName.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				SearchResultEntity entity = (SearchResultEntity) element;
-				return entity.get(Fields.METHOD);
-			}
-		});
-	}
+  @Override
+  public void createControl(Composite parent) {
+    this.rootControl = new Composite(parent, SWT.NULL);
+    this.rootControl.setLayout(new FillLayout());
 
-	@Override
-	public void searchResultChanged(SearchResultEvent e) {
-		if (e instanceof ro.orbuculum.search.SearchResultEvent) {
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					ro.orbuculum.search.SearchResultEvent event = (ro.orbuculum.search.SearchResultEvent) e;
-					SearchResultEntity newEntity = event.getAddedEntity();
-					System.err.println("New entity: "+ newEntity);
-					ArrayList<SearchResultEntity> result = (ArrayList<SearchResultEntity>) SearchResultPage.this.searchResult.getResult();
-					SearchResultPage.this.viewer.setInput(result);
-				}
-			});
-		}
-	}
+    viewer = new TableViewer(rootControl, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
+    createColumns();
+    createControl();
 
-	@Override
-	public IPageSite getSite() {
-		return this.site;
-	}
+    // Make lines and header visible
+    final Table table = viewer.getTable();
+    table.setHeaderVisible(true);
+    table.setLinesVisible(true);
 
-	@Override
-	public void init(IPageSite arg0) throws PartInitException {
-		this.site = arg0;
-	}
+    viewer.setContentProvider(new ArrayContentProvider());
+    // Make the selection available to other views
+    getSite().setSelectionProvider(viewer);
+  }
 
-	@Override
-	public void dispose() {
-	}
+  @Override
+  public void searchResultChanged(SearchResultEvent e) {
+    if (e instanceof ro.orbuculum.search.SearchResultEvent) {
+      Display.getDefault().asyncExec(new Runnable() {
+        @Override
+        public void run() {
+          ro.orbuculum.search.SearchResultEvent event = (ro.orbuculum.search.SearchResultEvent) e;
+          SearchResultEntity newEntity = event.getAddedEntity();
+          System.err.println("New entity: "+ newEntity);
+          ArrayList<SearchResultEntity> result = (ArrayList<SearchResultEntity>) SearchResultPage.this.searchResult.getResult();
+          SearchResultPage.this.viewer.setInput(result);
+        }
+      });
+    }
+  }
 
-	@Override
-	public void saveState(IMemento memento) {
-	}
+  @Override
+  public IPageSite getSite() {
+    return this.site;
+  }
 
-	@Override
-	public void restoreState(IMemento memento) {
-	}
+  @Override
+  public void init(IPageSite arg0) throws PartInitException {
+    this.site = arg0;
+  }
 
-	@Override
-	public void setInput(ISearchResult searchResult, Object uiState) {
-		this.searchResult = (SearchResult) searchResult;
-		searchResult.addListener(this);
-	}
+  @Override
+  public void dispose() {
+  }
 
-	@Override
-	public void setViewPart(ISearchResultViewPart part) {
-	}
+  @Override
+  public void saveState(IMemento memento) {
+  }
 
-	@Override
-	public void setActionBars(IActionBars arg0) {
-		System.err.println("Actionbars : " + arg0);
-	}
+  @Override
+  public void restoreState(IMemento memento) {
+  }
 
-	@Override
-	public void setFocus() {
-		viewer.getControl().setFocus();
-	}
+  @Override
+  public void setInput(ISearchResult searchResult, Object uiState) {
+    this.searchResult = (SearchResult) searchResult;
+    searchResult.addListener(this);
+  }
 
-	@Override
-	public Object getUIState() {
-		return null;
-	}
+  @Override
+  public void setViewPart(ISearchResultViewPart part) {
+  }
 
-	@Override
-	public void setID(String id) {
-		this.id = id;
-	}
+  @Override
+  public void setActionBars(IActionBars arg0) {
+  }
 
-	@Override
-	public String getID() {
-		return this.id;
-	}
+  @Override
+  public void setFocus() {
+    viewer.getControl().setFocus();
+  }
 
-	@Override
-	public String getLabel() {
-		return "Filesystem Search Results";
-	}
+  @Override
+  public Object getUIState() {
+    return null;
+  }
 
-	@Override
-	public Control getControl() {
-		return rootControl;
-	}
+  @Override
+  public void setID(String id) {
+    this.id = id;
+  }
+
+  @Override
+  public String getID() {
+    return this.id;
+  }
+
+  @Override
+  public String getLabel() {
+    return "Filesystem Search Results";
+  }
+
+  @Override
+  public Control getControl() {
+    return rootControl;
+  }
+
+  /**
+   * Attach behavior.
+   */
+  private void createControl() {
+    viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+      @Override
+      public void selectionChanged(SelectionChangedEvent event) {
+        IStructuredSelection selection = viewer.getStructuredSelection();
+        Object firstElement = selection.getFirstElement();
+        System.err.println("selection:"+selection + " " + firstElement);
+      }
+    });
+
+    viewer.addDoubleClickListener(new IDoubleClickListener() {
+      @Override
+      public void doubleClick(DoubleClickEvent event) {
+        ISelection selection = viewer.getSelection();
+        ro.orbuculum.search.SearchResultEntity entity = (SearchResultEntity) ((IStructuredSelection)selection).getFirstElement();
+        try {
+          entity.get(Fields.PATH);
+          IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(entity.get(Fields.PROJECT));
+          IFile file = project.getFile(entity.get(Fields.PATH));
+          IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+
+          AbstractTextEditor editor = (AbstractTextEditor) IDE.openEditor(activePage, file);
+          IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+          int from = Integer.parseInt(entity.get(Fields.OFFSET_START));
+          int end = Integer.parseInt(entity.get(Fields.OFFSET_END));
+          try {
+            int startOffset = document.getLineOffset(from - 1);
+            int endOffset = document.getLineOffset(end) - 1;
+            editor.selectAndReveal(startOffset, endOffset - startOffset);
+          } catch (BadLocationException e) {   
+            Activator.getDefault().getLog().log(new Status(Status.ERROR, Activator.PLUGIN_ID, e.toString(), e)); 
+          }
+        } catch (PartInitException e) {
+          Activator.getDefault().getLog().log(new Status(Status.ERROR, Activator.PLUGIN_ID, e.toString(), e)); 
+        }
+      }
+    });
+  }
+
+  /**
+   * Attach columns.
+   */
+  private void createColumns() {
+    TableViewerColumn colFirstName = new TableViewerColumn(viewer,  SWT.NONE, 0);
+    colFirstName.getColumn().setWidth(200);
+    colFirstName.getColumn().setText("Clasa");
+    colFirstName.setLabelProvider(new ColumnLabelProvider() {
+      @Override
+      public String getText(Object element) {
+        SearchResultEntity entity = (SearchResultEntity) element;
+        return entity.get(Fields.CLASS);
+      }
+    });
+
+    TableViewerColumn colSecondName = new TableViewerColumn(viewer,  SWT.NONE, 1);
+    colSecondName.getColumn().setWidth(200);
+    colSecondName.getColumn().setText("Metoda");
+    colSecondName.setLabelProvider(new ColumnLabelProvider() {
+      @Override
+      public String getText(Object element) {
+        SearchResultEntity entity = (SearchResultEntity) element;
+        return entity.get(Fields.METHOD);
+      }
+    });
+  }
+
 }

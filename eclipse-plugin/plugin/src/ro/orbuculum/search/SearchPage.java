@@ -11,17 +11,33 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * Search page that produce the {@link SearchQuery}.
+ * 
+ * @author bogdan
+ */
 public class SearchPage implements ISearchPage {
 
+  /**
+   * The main input.
+   */
 	private Text text;
+	
+	/**
+	 * Container.
+	 */
 	private ISearchPageContainer container;
+	
+	/**
+	 * Control.
+	 */
 	private Composite control;
 
 	@Override
 	public void createControl(Composite arg0) {
-		text = new Text(arg0, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
-		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
-		this.control = arg0;
+	  this.control = arg0;
+		this.text = new Text(arg0, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
+		this.text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 	}
 
 	@Override
@@ -42,6 +58,7 @@ public class SearchPage implements ISearchPage {
 
 	@Override
 	public String getDescription() {
+	  // TODO:
 		return "Description...:";
 	}
 
@@ -57,6 +74,7 @@ public class SearchPage implements ISearchPage {
 
 	@Override
 	public String getMessage() {
+	  // TODO:
 		return "Message";
 	}
 
