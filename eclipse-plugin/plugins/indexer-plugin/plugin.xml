@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Search"
+            id="eclipse-plugin">
+      </category>
+      <view
+            name="Indexer"
+            icon="icons/sample.gif"
+            category="eclipse-plugin"
+            class="ro.orbuculum.indexer.SemanticSearch"
+            id="ro.orbuculum.indexer.SemanticSearch">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               ratio="0.5"
+               relative="org.eclipse.ui.views.ProblemView"
+               relationship="right"
+               id="ro.orbuculum.indexer.SemanticSearch">
+         </view>
+      </perspectiveExtension>
+   </extension>
+</plugin>

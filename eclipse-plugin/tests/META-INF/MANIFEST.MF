@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Orbuculum-plugin-test
+Bundle-SymbolicName: ro.orbuculum.plugin.tests;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: ro.orbuculum.search.plugin,
+ ro.orbuculum.indexer.plugin,
+ org.junit
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

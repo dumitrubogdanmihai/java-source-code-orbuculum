@@ -1,0 +1,12 @@
+version: '2'
+services:
+  orbuculum:
+    image: solr
+    ports:
+     - "8983:8983"
+    volumes:
+      - ./solr/core:/opt/solr/server/solr/core
+  indexer-agent:
+    image: indexer-agent
+    ports:
+     - "8080:8080"
