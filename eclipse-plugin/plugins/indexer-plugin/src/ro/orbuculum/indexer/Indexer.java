@@ -2,6 +2,7 @@ package ro.orbuculum.indexer;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -12,6 +13,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -35,6 +37,28 @@ public class Indexer {
   private OutputStream os;
 
   /**
+   * OkHttp client.
+   */
+  private static OkHttpClient client = 
+      new OkHttpClient.Builder()
+      .readTimeout(1, TimeUnit.MINUTES)
+      .build();
+//  static {
+//    Builder builder = new OkHttpClient.Builder();
+//    builder.addNetworkInterceptor(new Interceptor() {
+//      @Override
+//      public okhttp3.Response intercept(Chain chain) throws IOException {
+//        Request request = chain.request();
+//        System.err.println("request:"+request.url());
+//        okhttp3.Response response = chain.proceed(request);
+//        if (response.code() == 403) {
+//        }
+//        return response;
+//      }
+//    });
+//  }
+  
+  /**
    * Constructor.
    */
   public Indexer() {
@@ -48,6 +72,7 @@ public class Indexer {
     this.os = os;
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl("http://localhost:8080/")
+        .client(client)
         .build();
     this.restApi = retrofit.create(IndexerAgentApi.class);
   }

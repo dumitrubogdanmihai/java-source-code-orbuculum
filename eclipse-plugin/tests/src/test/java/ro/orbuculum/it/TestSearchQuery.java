@@ -42,7 +42,7 @@ public class TestSearchQuery {
     Response<Void> request = restApi.index(path).execute();
     assertTrue(request.toString(), request.isSuccessful());
 
-    SearchQuery sq = new SearchQuery("");
+    SearchQuery sq = new SearchQuery("", null);
     sq.run(null);
     SearchResult searchResult = (SearchResult) sq.getSearchResult();
     List<SearchResultEntity> result = searchResult.getResult();

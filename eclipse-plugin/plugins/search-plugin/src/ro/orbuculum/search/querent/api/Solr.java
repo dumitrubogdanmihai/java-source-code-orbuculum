@@ -1,7 +1,15 @@
 package ro.orbuculum.search.querent.api;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.JavaCore;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -90,12 +98,11 @@ public class Solr {
    * @param q Query.
    * @param consumer Consumer.
    */
-  public static void get(String q, Consumer<Result> consumer) {  
+  public static void get(String q, Consumer<Result> consumer) {
     SolrApi api = SOLR_CORE.create(SolrApi.class);
-    if (q == null || q.isEmpty() || !q.contains("*")) {
-      q = "*:*";
-    }
     
+    System.err.println("Solr get q : " + q);    
+
     Call<Result> documents = api.getDocuments(q);
     documents.enqueue(new Callback<Result>() {
       @Override
@@ -110,5 +117,40 @@ public class Solr {
         consumer.accept(null);
       }
     });
+  }
+  
+  public static List<String> getOpenedProjects() {
+    List<String> toReturn = new ArrayList<>();
+    IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+    IProject[] projects = workspaceRoot.getProjects();
+    for (int i = 0; i < projects.length; i++) {
+      IProject project = projects[i];
+      try {
+        if (project.isOpen() && project.hasNature(JavaCore.NATURE_ID)) {
+          toReturn.add(project.getName());
+        }
+      } catch (CoreException e) {
+        e.printStackTrace();
+      }
+    }
+    return toReturn;
+  }
+  
+  public static String getQueryOpenedProjects(List<String> openedProjects) {
+    String toReturn = "(";
+        
+    if (openedProjects.isEmpty()) {
+      toReturn += "project:*";
+    } else {
+      for (int i = 0; i < openedProjects.size(); i++) {
+        if (i != openedProjects.size() - 1) {
+          toReturn += " OR ";
+        }
+        toReturn += "project:\"" + openedProjects.get(i) + "\"";
+      }
+    }
+
+    toReturn += ")";
+    return toReturn;
   }
 }

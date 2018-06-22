@@ -45,20 +45,10 @@ public class SearchResult implements ISearchResult {
 	 */
 	public void addEntity(SearchResultEntity entity) {
 		result.add(entity);
-		result.sort(new ResultComparatorByClass());
 		notifyListeners(entity);
 	}
 	
-	/**
-	 * Notify,
-	 * @param f entity.
-	 */
-	private void notifyListeners(SearchResultEntity f) {
-		SearchResultEvent event = new SearchResultEvent(this, f);
-		for (Object listener : listeners.getListeners()) {
-			((ISearchResultListener) listener).searchResultChanged(event);
-		}
-	}
+	
 
 	/**
 	 * @return Get retrieved results.
@@ -67,10 +57,6 @@ public class SearchResult implements ISearchResult {
     return result;
   }
   
-	@Override
-	public void addListener(ISearchResultListener arg0) {
-		listeners.add(arg0);
-	}
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
@@ -92,8 +78,24 @@ public class SearchResult implements ISearchResult {
 		return "Found files";
 	}
 
+  @Override
+  public void addListener(ISearchResultListener arg0) {
+    listeners.add(arg0);
+  }
+  
 	@Override
 	public void removeListener(ISearchResultListener arg0) {
 		listeners.remove(arg0);
 	}
+	
+	/**
+   * Notify,
+   * @param f entity.
+   */
+  private void notifyListeners(SearchResultEntity f) {
+    SearchResultEvent event = new SearchResultEvent(this, f);
+    for (Object listener : listeners.getListeners()) {
+      ((ISearchResultListener) listener).searchResultChanged(event);
+    }
+  }
 }

@@ -6,8 +6,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
-import org.eclipse.jdt.internal.ui.javaeditor.JavaSourceViewer;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -37,7 +35,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.IPageSite;
-import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import ro.orbuculum.Activator;
 
@@ -73,6 +71,10 @@ public class SearchResultPage implements ISearchResultPage, ISearchResultListene
    */
   private SearchResult searchResult;
 
+  public SearchResultPage() {
+    System.err.println("NEW SearchResultPage!!!");
+  }
+  
   @Override
   public void createControl(Composite parent) {
     this.rootControl = new Composite(parent, SWT.NULL);
@@ -94,13 +96,17 @@ public class SearchResultPage implements ISearchResultPage, ISearchResultListene
 
   @Override
   public void searchResultChanged(SearchResultEvent e) {
-    if (e instanceof ro.orbuculum.search.SearchResultEvent) {
+    if (e == null) {
       Display.getDefault().asyncExec(new Runnable() {
         @Override
         public void run() {
-          ro.orbuculum.search.SearchResultEvent event = (ro.orbuculum.search.SearchResultEvent) e;
-          SearchResultEntity newEntity = event.getAddedEntity();
-          System.err.println("New entity: "+ newEntity);
+          SearchResultPage.this.viewer.setInput(null);
+        }
+      });
+    } else if (e instanceof ro.orbuculum.search.SearchResultEvent) {
+      Display.getDefault().asyncExec(new Runnable() {
+        @Override
+        public void run() {
           ArrayList<SearchResultEntity> result = 
               (ArrayList<SearchResultEntity>) SearchResultPage.this.searchResult.getResult();
           SearchResultPage.this.viewer.setInput(result);
@@ -133,8 +139,14 @@ public class SearchResultPage implements ISearchResultPage, ISearchResultListene
 
   @Override
   public void setInput(ISearchResult searchResult, Object uiState) {
-    this.searchResult = (SearchResult) searchResult;
-    searchResult.addListener(this);
+    SearchResult newSearchResult = (SearchResult) searchResult;
+    if (newSearchResult != null) {
+      this.searchResult = newSearchResult;
+      this.searchResult.addListener(this);
+    } else {
+      this.searchResult.removeListener(this);
+      searchResultChanged(null);
+    }
   }
 
   @Override
@@ -197,23 +209,21 @@ public class SearchResultPage implements ISearchResultPage, ISearchResultListene
           IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(entity.getProject());
           IFile file = project.getFile(entity.getPath());
           IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-
-          
-          CompilationUnitEditor editor = (CompilationUnitEditor) IDE.openEditor(activePage, file);
-          IDocumentProvider documentProvider = editor.getDocumentProvider();
-          JavaSourceViewer viewer2 = (JavaSourceViewer) editor.getViewer();
-          System.err.println("documentProvider:"+documentProvider);
-          System.err.println();
+          AbstractTextEditor editor = (AbstractTextEditor) IDE.openEditor(activePage, file);
+//        
+//          IDocumentProvider documentProvider = editor.getDocumentProvider();
+//          JavaSourceViewer viewer2 = (JavaSourceViewer) editor.getViewer();
           IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
-//          int from = Integer.parseInt(entity.get(Fields.OFFSET_START));
-//          int end = Integer.parseInt(entity.get(Fields.OFFSET_END));
-//          try {
-//            int startOffset = document.getLineOffset(from - 1);
-//            int endOffset = document.getLineOffset(end) - 1;
-//            editor.selectAndReveal(startOffset, endOffset - startOffset);
-//          } catch (BadLocationException e) {   
-//            Activator.getDefault().getLog().log(new Status(Status.ERROR, Activator.PLUGIN_ID, e.toString(), e)); 
-//          }
+          
+          Integer from = entity.getLineStart();
+          Integer to = entity.getLineEnd();
+          try {
+            int startOffset = document.getLineOffset(from - 1);
+            int endOffset = document.getLineOffset(to) - 1;
+            editor.selectAndReveal(startOffset, endOffset - startOffset);
+          } catch (Exception e) {   
+            Activator.getDefault().getLog().log(new Status(Status.ERROR, Activator.PLUGIN_ID, e.toString(), e)); 
+          }
         } catch (PartInitException e) {
           Activator.getDefault().getLog().log(new Status(Status.ERROR, Activator.PLUGIN_ID, e.toString(), e)); 
         }
@@ -247,5 +257,4 @@ public class SearchResultPage implements ISearchResultPage, ISearchResultListene
       }
     });
   }
-
 }

@@ -64,10 +64,4 @@ public class RESTIndexer {
 
     return Response.ok().build();
   }
-  
- @GET
- @Path("index")
- public Response index() {
-   return Response.ok().build();
-  }
 }

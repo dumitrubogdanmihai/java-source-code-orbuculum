@@ -11,6 +11,11 @@ import ro.orbuculum.search.querent.jaxb.Result;
  * @author bogdan
  */
 interface SolrApi {
-	@GET("select?wt=xml")
-	Call<Result> getDocuments(@Query(value = "q") String q);
+  @GET("select?wt=xml")
+  Call<Result> getDocuments(
+      @Query(value = "q") String q, 
+      @Query(value = "sort") String sort);
+  @GET("select?wt=xml")
+  Call<Result> getDocuments(
+      @Query(value = "q") String q);
 }

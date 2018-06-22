@@ -7,9 +7,12 @@ import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
+
+import ro.orbuculum.search.querent.api.Solr;
 
 /**
  * Search page that produce the {@link SearchQuery}.
@@ -21,7 +24,7 @@ public class SearchPage implements ISearchPage {
   /**
    * The main input.
    */
-	private Text text;
+	private Text methodQueryText;
 	
 	/**
 	 * Container.
@@ -33,22 +36,40 @@ public class SearchPage implements ISearchPage {
 	 */
 	private Composite control;
 
+	/**
+	 * Project combo.
+	 */
+  private Combo projectCombo;
+
+  public SearchPage() {
+    System.err.println("NEW SEARCH PAGE !!!");
+  }
+  
 	@Override
 	public void createControl(Composite arg0) {
 	  this.control = arg0;
-		this.text = new Text(arg0,  SWT.CANCEL | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
-		this.text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
-		this.text.setText("Insert your query as the exaple below:\n"
+	  
+    projectCombo = new Combo(arg0, SWT.DROP_DOWN | SWT.BORDER);
+    projectCombo.setText("Select the project that will be searched for:");
+    projectCombo.add("All opened projects");
+    Solr.getOpenedProjects().forEach(p -> projectCombo.add(p));
+	  
+		methodQueryText = new Text(arg0,  SWT.CANCEL | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
+		methodQueryText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
+		methodQueryText.setText("Insert your query as the exaple below:\n"
         + "class:Controller\n"
         + "method:build\n"
         + "call:factory\n"
         + "keyword:new");
-		this.text.selectAll();
+		methodQueryText.selectAll();
 	}
 
 	@Override
 	public boolean performAction() {
-		SearchQuery searchQuery = new SearchQuery(text.getText());
+	  System.err.println("performAction");
+	  String selectedProject = (projectCombo.getSelectionIndex() == -1 ? null : projectCombo.getText());
+	  String rawMethodQuery = methodQueryText.getText();
+		SearchQuery searchQuery = new SearchQuery(rawMethodQuery, selectedProject);
 		NewSearchUI.runQueryInForeground(container.getRunnableContext(), searchQuery);
 		return true;
 	}
@@ -64,7 +85,6 @@ public class SearchPage implements ISearchPage {
 
 	@Override
 	public String getDescription() {
-	  // TODO:
 		return "Description...:";
 	}
 
