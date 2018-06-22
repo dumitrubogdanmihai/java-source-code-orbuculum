@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?metadataRepository version='1.1.0'?>
 <repository name='TychoTargetPlatform' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='0.0.1'>
-  <units size='102'>
+  <units size='103'>
     <unit id='org.eclipse.e4.ui.css.swt.theme' version='0.10.100.v20160523-0836'>
       <update id='org.eclipse.e4.ui.css.swt.theme' range='[0.0.0,0.10.100.v20160523-0836)' severity='0'/>
       <properties size='8'>
@@ -553,78 +553,6 @@
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='ro.orbuculum.search.plugin' version='1.0.0.201806162310'>
-      <update id='ro.orbuculum.search.plugin' range='[0.0.0,1.0.0.201806162310)' severity='0'/>
-      <properties size='4'>
-        <property name='org.eclipse.equinox.p2.name' value='Orbuculum-plugin'/>
-        <property name='maven-groupId' value='ro.orbuculum'/>
-        <property name='maven-artifactId' value='ro.orbuculum.search.plugin'/>
-        <property name='maven-version' value='1.0.0-SNAPSHOT'/>
-      </properties>
-      <provides size='4'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='ro.orbuculum.search.plugin' version='1.0.0.201806162310'/>
-        <provided namespace='osgi.bundle' name='ro.orbuculum.search.plugin' version='1.0.0.201806162310'/>
-        <provided namespace='java.package' name='ro.orbuculum.search.querent.api' version='0.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
-      </provides>
-      <requires size='12'>
-        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.search' range='3.11.1'/>
-        <required namespace='osgi.bundle' name='org.eclipse.ui.console' range='3.6.201'/>
-        <required namespace='osgi.bundle' name='org.junit' range='0.0.0'/>
-        <required namespace='osgi.bundle' name='org.eclipse.jface.text' range='3.11.2'/>
-        <required namespace='osgi.bundle' name='org.eclipse.jdt.ui' range='3.12.2'/>
-        <required namespace='java.package' name='org.eclipse.core.internal.resources' range='0.0.0'/>
-        <required namespace='java.package' name='org.eclipse.core.resources' range='0.0.0'/>
-        <required namespace='java.package' name='org.eclipse.jdt.core' range='0.0.0'/>
-        <required namespace='java.package' name='org.eclipse.ui.ide' range='0.0.0'/>
-        <required namespace='java.package' name='org.eclipse.ui.texteditor' range='0.0.0'/>
-      </requires>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='ro.orbuculum.search.plugin' version='1.0.0.201806162310'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-SymbolicName: ro.orbuculum.search.plugin;singleton:=true&#xA;Bundle-Version: 1.0.0.201806162310
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
-    <unit id='ro.orbuculum.feature.feature.group' version='1.0.0.201806162310' singleton='false'>
-      <update id='ro.orbuculum.feature.feature.group' range='[0.0.0,1.0.0.201806162310)' severity='0'/>
-      <properties size='7'>
-        <property name='org.eclipse.equinox.p2.name' value='Orbuculum Feature'/>
-        <property name='org.eclipse.equinox.p2.description' value='[Enter Feature Description here.]'/>
-        <property name='org.eclipse.equinox.p2.description.url' value='http://www.example.com/description'/>
-        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
-        <property name='maven-groupId' value='ro.orbuculum'/>
-        <property name='maven-artifactId' value='ro.orbuculum.feature'/>
-        <property name='maven-version' value='1.0.0-SNAPSHOT'/>
-      </properties>
-      <provides size='1'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='ro.orbuculum.feature.feature.group' version='1.0.0.201806162310'/>
-      </provides>
-      <requires size='2'>
-        <required namespace='org.eclipse.equinox.p2.iu' name='ro.orbuculum.search.plugin' range='[1.0.0.201806162310,1.0.0.201806162310]'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='ro.orbuculum.feature.feature.jar' range='[1.0.0.201806162310,1.0.0.201806162310]'>
-          <filter>
-            (org.eclipse.update.install.features=true)
-          </filter>
-        </required>
-      </requires>
-      <touchpoint id='null' version='0.0.0'/>
-      <licenses size='1'>
-        <license uri='http://www.example.com/license' url='http://www.example.com/license'>
-          [Enter License Description here.]
-        </license>
-      </licenses>
-      <copyright uri='http://www.example.com/copyright' url='http://www.example.com/copyright'>
-        [Enter Copyright Description here.]
-      </copyright>
-    </unit>
     <unit id='org.eclipse.core.databinding.observable' version='1.6.0.v20160511-1747' singleton='false'>
       <update id='org.eclipse.core.databinding.observable' range='[0.0.0,1.6.0.v20160511-1747)' severity='0'/>
       <properties size='8'>
@@ -875,6 +803,43 @@
           </instruction>
         </instructions>
       </touchpointData>
+    </unit>
+    <unit id='ro.orbuculum.feature.feature.jar' version='1.0.0.201806211631'>
+      <properties size='6'>
+        <property name='org.eclipse.equinox.p2.name' value='Orbuculum Feature'/>
+        <property name='org.eclipse.equinox.p2.description' value='[Enter Feature Description here.]'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://www.example.com/description'/>
+        <property name='maven-groupId' value='ro.orbuculum'/>
+        <property name='maven-artifactId' value='ro.orbuculum.feature'/>
+        <property name='maven-version' value='1.0.0-SNAPSHOT'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='ro.orbuculum.feature.feature.jar' version='1.0.0.201806211631'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
+        <provided namespace='org.eclipse.update.feature' name='ro.orbuculum.feature' version='1.0.0.201806211631'/>
+      </provides>
+      <filter>
+        (org.eclipse.update.install.features=true)
+      </filter>
+      <artifacts size='1'>
+        <artifact classifier='org.eclipse.update.feature' id='ro.orbuculum.feature' version='1.0.0.201806211631'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+      <licenses size='1'>
+        <license uri='http://www.example.com/license' url='http://www.example.com/license'>
+          [Enter License Description here.]
+        </license>
+      </licenses>
+      <copyright uri='http://www.example.com/copyright' url='http://www.example.com/copyright'>
+        [Enter Copyright Description here.]
+      </copyright>
     </unit>
     <unit id='org.eclipse.emf.common' version='2.12.0.v20160420-0247'>
       <update id='org.eclipse.emf.common' range='[0.0.0,2.12.0.v20160420-0247)' severity='0'/>
@@ -1366,6 +1331,39 @@
           </instruction>
         </instructions>
       </touchpointData>
+    </unit>
+    <unit id='ro.orbuculum.feature.feature.group' version='1.0.0.201806211631' singleton='false'>
+      <update id='ro.orbuculum.feature.feature.group' range='[0.0.0,1.0.0.201806211631)' severity='0'/>
+      <properties size='7'>
+        <property name='org.eclipse.equinox.p2.name' value='Orbuculum Feature'/>
+        <property name='org.eclipse.equinox.p2.description' value='[Enter Feature Description here.]'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://www.example.com/description'/>
+        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
+        <property name='maven-groupId' value='ro.orbuculum'/>
+        <property name='maven-artifactId' value='ro.orbuculum.feature'/>
+        <property name='maven-version' value='1.0.0-SNAPSHOT'/>
+      </properties>
+      <provides size='1'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='ro.orbuculum.feature.feature.group' version='1.0.0.201806211631'/>
+      </provides>
+      <requires size='3'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='ro.orbuculum.search.plugin' range='[1.0.0.201806211631,1.0.0.201806211631]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='ro.orbuculum.indexer.plugin' range='[1.0.0.201806211631,1.0.0.201806211631]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='ro.orbuculum.feature.feature.jar' range='[1.0.0.201806211631,1.0.0.201806211631]'>
+          <filter>
+            (org.eclipse.update.install.features=true)
+          </filter>
+        </required>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
+      <licenses size='1'>
+        <license uri='http://www.example.com/license' url='http://www.example.com/license'>
+          [Enter License Description here.]
+        </license>
+      </licenses>
+      <copyright uri='http://www.example.com/copyright' url='http://www.example.com/copyright'>
+        [Enter Copyright Description here.]
+      </copyright>
     </unit>
     <unit id='org.eclipse.e4.core.contexts' version='1.5.1.v20170203-1100' singleton='false'>
       <update id='org.eclipse.e4.core.contexts' range='[0.0.0,1.5.1.v20170203-1100)' severity='0'/>
@@ -2021,6 +2019,46 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-SymbolicName: org.eclipse.compare.core&#xA;Bundle-Version: 3.6.0.v20160418-1534
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='ro.orbuculum.search.plugin' version='1.0.0.201806211631'>
+      <update id='ro.orbuculum.search.plugin' range='[0.0.0,1.0.0.201806211631)' severity='0'/>
+      <properties size='4'>
+        <property name='org.eclipse.equinox.p2.name' value='Orbuculum-plugin'/>
+        <property name='maven-groupId' value='ro.orbuculum'/>
+        <property name='maven-artifactId' value='ro.orbuculum.search.plugin'/>
+        <property name='maven-version' value='1.0.0-SNAPSHOT'/>
+      </properties>
+      <provides size='4'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='ro.orbuculum.search.plugin' version='1.0.0.201806211631'/>
+        <provided namespace='osgi.bundle' name='ro.orbuculum.search.plugin' version='1.0.0.201806211631'/>
+        <provided namespace='java.package' name='ro.orbuculum.search.querent.api' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='12'>
+        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.search' range='3.11.1'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.console' range='3.6.201'/>
+        <required namespace='osgi.bundle' name='org.junit' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jface.text' range='3.11.2'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jdt.ui' range='3.12.2'/>
+        <required namespace='java.package' name='org.eclipse.core.internal.resources' range='0.0.0'/>
+        <required namespace='java.package' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='java.package' name='org.eclipse.jdt.core' range='0.0.0'/>
+        <required namespace='java.package' name='org.eclipse.ui.ide' range='0.0.0'/>
+        <required namespace='java.package' name='org.eclipse.ui.texteditor' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='ro.orbuculum.search.plugin' version='1.0.0.201806211631'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: ro.orbuculum.search.plugin;singleton:=true&#xA;Bundle-Version: 1.0.0.201806211631
           </instruction>
         </instructions>
       </touchpointData>
@@ -3518,6 +3556,46 @@
         <instructions size='1'>
           <instruction key='manifest'>
             Bundle-SymbolicName: org.eclipse.e4.core.di.extensions;singleton:=true&#xA;Bundle-Version: 0.14.0.v20160211-1614
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='ro.orbuculum.indexer.plugin' version='1.0.0.201806211631'>
+      <update id='ro.orbuculum.indexer.plugin' range='[0.0.0,1.0.0.201806211631)' severity='0'/>
+      <properties size='4'>
+        <property name='org.eclipse.equinox.p2.name' value='Orbuculum-plugin'/>
+        <property name='maven-groupId' value='ro.orbuculum'/>
+        <property name='maven-artifactId' value='ro.orbuculum.indexer.plugin'/>
+        <property name='maven-version' value='1.0.0-SNAPSHOT'/>
+      </properties>
+      <provides size='4'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='ro.orbuculum.indexer.plugin' version='1.0.0.201806211631'/>
+        <provided namespace='osgi.bundle' name='ro.orbuculum.indexer.plugin' version='1.0.0.201806211631'/>
+        <provided namespace='java.package' name='ro.orbuculum.indexer' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='12'>
+        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.search' range='3.11.1'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.console' range='3.6.201'/>
+        <required namespace='osgi.bundle' name='org.junit' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jface.text' range='3.11.2'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jdt.ui' range='3.12.2'/>
+        <required namespace='java.package' name='org.eclipse.core.internal.resources' range='0.0.0'/>
+        <required namespace='java.package' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='java.package' name='org.eclipse.jdt.core' range='0.0.0'/>
+        <required namespace='java.package' name='org.eclipse.ui.ide' range='0.0.0'/>
+        <required namespace='java.package' name='org.eclipse.ui.texteditor' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='ro.orbuculum.indexer.plugin' version='1.0.0.201806211631'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-SymbolicName: ro.orbuculum.indexer.plugin;singleton:=true&#xA;Bundle-Version: 1.0.0.201806211631
           </instruction>
         </instructions>
       </touchpointData>
@@ -5213,43 +5291,6 @@
           </instruction>
         </instructions>
       </touchpointData>
-    </unit>
-    <unit id='ro.orbuculum.feature.feature.jar' version='1.0.0.201806162310'>
-      <properties size='6'>
-        <property name='org.eclipse.equinox.p2.name' value='Orbuculum Feature'/>
-        <property name='org.eclipse.equinox.p2.description' value='[Enter Feature Description here.]'/>
-        <property name='org.eclipse.equinox.p2.description.url' value='http://www.example.com/description'/>
-        <property name='maven-groupId' value='ro.orbuculum'/>
-        <property name='maven-artifactId' value='ro.orbuculum.feature'/>
-        <property name='maven-version' value='1.0.0-SNAPSHOT'/>
-      </properties>
-      <provides size='3'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='ro.orbuculum.feature.feature.jar' version='1.0.0.201806162310'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
-        <provided namespace='org.eclipse.update.feature' name='ro.orbuculum.feature' version='1.0.0.201806162310'/>
-      </provides>
-      <filter>
-        (org.eclipse.update.install.features=true)
-      </filter>
-      <artifacts size='1'>
-        <artifact classifier='org.eclipse.update.feature' id='ro.orbuculum.feature' version='1.0.0.201806162310'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='zipped'>
-            true
-          </instruction>
-        </instructions>
-      </touchpointData>
-      <licenses size='1'>
-        <license uri='http://www.example.com/license' url='http://www.example.com/license'>
-          [Enter License Description here.]
-        </license>
-      </licenses>
-      <copyright uri='http://www.example.com/copyright' url='http://www.example.com/copyright'>
-        [Enter Copyright Description here.]
-      </copyright>
     </unit>
     <unit id='org.eclipse.e4.ui.css.swt' version='0.12.100.v20160517-1505'>
       <update id='org.eclipse.e4.ui.css.swt' range='[0.0.0,0.12.100.v20160517-1505)' severity='0'/>

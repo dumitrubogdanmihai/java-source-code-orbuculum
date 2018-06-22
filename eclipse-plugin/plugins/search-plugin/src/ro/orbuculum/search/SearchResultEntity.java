@@ -1,34 +1,53 @@
 package ro.orbuculum.search;
 
-import java.util.Map;
-
-import ro.orbuculum.search.querent.api.Fields;
+import ro.orbuculum.search.querent.jaxb.Doc;
 
 /**
  * Retrieved Solr documents representation.
  * 
  * @author bogdan
  */
-public class SearchResultEntity {
+public class SearchResultEntity extends Doc {
   /**
-   * The stored fields.
+   * Solr indexed document.
    */
-  private Map<String, String> docFields;
+  private Doc doc;
 
   /**
    * Constructor.
    * @param docFields retrieved fields.
    */
-  public SearchResultEntity(Map<String, String> docFields) {
-    this.docFields = docFields;
+  public SearchResultEntity(Doc doc) {
+    this.doc = doc;
   }
-
-  /**
-   * Get the value for a field.
-   * @param field The field.
-   * @return The value.
-   */
-  public String get(Fields field) {
-    return docFields.get(field.getName());
+  
+  @Override
+  public String getClassName() {
+    return doc.getClassName();
+  }
+  
+  @Override
+  public Integer getLineEnd() {
+    return doc.getLineEnd();
+  }
+  
+  @Override
+  public Integer getLineStart() {
+    return doc.getLineStart();
+  }
+  
+  @Override
+  public String getMethod() {
+    return doc.getMethod();
+  }
+  
+  @Override
+  public String getPath() {
+    return doc.getPath();
+  }
+  
+  @Override
+  public String getProject() {
+    return doc.getProject();
   }
 }

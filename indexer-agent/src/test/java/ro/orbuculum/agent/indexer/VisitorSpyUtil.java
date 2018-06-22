@@ -40,12 +40,7 @@ public class VisitorSpyUtil {
       File sampleSource, int documents) throws SolrServerException, IOException {
     // Given
     SolrClient solrClientMock = mock(SolrClient.class);
-    AstIndexer indexerSpy = spy(new AstIndexer("test-port", "test-core") {
-      @Override
-      protected SolrClient buildSolrClient(String host, String port, String core) {
-        return solrClientMock;
-      }
-    });
+    AstIndexer indexerSpy = spy(new AstIndexer(solrClientMock));
 
     // When
     UpdateResponse responseMock = mock(UpdateResponse.class);

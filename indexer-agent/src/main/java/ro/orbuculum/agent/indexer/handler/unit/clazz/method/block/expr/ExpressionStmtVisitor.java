@@ -3,7 +3,6 @@ package ro.orbuculum.agent.indexer.handler.unit.clazz.method.block.expr;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.common.SolrInputDocument;
 
 import com.github.javaparser.ast.Node;
@@ -49,9 +48,5 @@ public class ExpressionStmtVisitor implements Visitor {
 	@Override
 	public List<Visitor> getChildrenVisitors() {
 		return Arrays.asList(new MethodCallExprVisitor(this.document, context));
-	}
-
-	@Override
-	public void commit(SolrClient client) {
 	}
 }

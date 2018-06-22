@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient.Builder;
@@ -42,12 +43,21 @@ public class AstIndexer {
   /**
    * Constructor.
    * 
-   * @param host 	Solr server host.
+   * @param host  Solr server host.
    * @param port  Solr server port.
    * @param core  Target core.
    */
   public AstIndexer(String host, String port, String core) {
     this.solr = buildSolrClient(host, port, core);
+  }
+
+  /**
+   * Constructor.
+   * 
+   * @param client  Solr clienet.
+   */
+  public AstIndexer(SolrClient client) {
+    this.solr = client;
   }
 
   /**
@@ -62,7 +72,7 @@ public class AstIndexer {
    */
   public void index(CompilationUnit unit, File projectDir, File javaResource) 
       throws SolrServerException, IOException {
-    Context context = new Context(projectDir, javaResource);
+    Context context = new Context(this.solr, projectDir, javaResource);
     CompilationUnitVisitor rootHandler = new CompilationUnitVisitor(context);
     index(unit, Arrays.asList(rootHandler));
   }
@@ -104,7 +114,7 @@ public class AstIndexer {
             index(child, childrenVisitors);
           }
           // Update the index.
-          visitor.commit(solr);			
+          visitor.commit();			
         }
       }
     }

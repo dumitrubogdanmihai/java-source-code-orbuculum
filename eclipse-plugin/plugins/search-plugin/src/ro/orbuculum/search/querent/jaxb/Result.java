@@ -1,28 +1,23 @@
-package ro.orbuculum.search.querent.api;
+package ro.orbuculum.search.querent.jaxb;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import ro.orbuculum.search.querent.jaxb.MapAdapter;
 
 @XmlRootElement
 public class Result {
-	private	List<Map<String, String>> docs;
+	private	List<Doc> docs;
 	private String name;
 	private	Integer numFound;
 	private	Integer start;
 
 	@XmlElement(name="doc")
-	@XmlJavaTypeAdapter(MapAdapter.class)
-	public List<Map<String, String>> getDocs() {
+	public List<Doc> getDocs() {
 		return docs;
 	}
-	public void setDocs(List<Map<String, String>> docs) {
+	public void setDocs(List<Doc> docs) {
 		this.docs = docs;
 	}
 	@XmlAttribute

@@ -11,8 +11,8 @@ import javax.xml.bind.Marshaller;
 import org.eclipse.core.runtime.Status;
 
 import ro.orbuculum.Activator;
-import ro.orbuculum.search.querent.api.Result;
 import ro.orbuculum.search.querent.jaxb.Response;
+import ro.orbuculum.search.querent.jaxb.Result;
 
 /**
  * Unmarshaller for the Solr response.

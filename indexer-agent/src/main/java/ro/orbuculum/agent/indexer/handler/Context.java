@@ -2,6 +2,8 @@ package ro.orbuculum.agent.indexer.handler;
 
 import java.io.File;
 
+import org.apache.solr.client.solrj.SolrClient;
+
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -34,13 +36,19 @@ public class Context {
 	private MethodDeclaration method;
 	
 	/**
+	 * Solr client.
+	 */
+  private SolrClient solrClient;
+	
+	/**
 	 * Constructor.
 	 * 
 	 * @param projectDir   Project directory.
 	 * @param sourcesFile  Source file.
 	 */
-	public Context(File projectDir, File sourcesFile) {
-		this.projectDir = projectDir;
+	public Context(SolrClient solrClient, File projectDir, File sourcesFile) {
+		this.solrClient = solrClient;
+    this.projectDir = projectDir;
 		this.sourcesFile = sourcesFile;
 	}
 	
@@ -74,4 +82,8 @@ public class Context {
 	public void setMethod(MethodDeclaration method) {
 		this.method = method;
 	}
+
+  public SolrClient getSolrClient() {
+    return solrClient;
+  }
 }

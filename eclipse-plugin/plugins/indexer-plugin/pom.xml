@@ -8,7 +8,7 @@
 		<groupId>ro.orbuculum</groupId>
 		<artifactId>plugin-parent-pom</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../parent</relativePath>
+		<relativePath>../../parent-pom</relativePath>
 	</parent>
 
 	<build>

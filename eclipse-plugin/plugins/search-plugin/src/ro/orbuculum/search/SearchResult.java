@@ -1,7 +1,6 @@
 package ro.orbuculum.search;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.runtime.ListenerList;
@@ -45,10 +44,11 @@ public class SearchResult implements ISearchResult {
 	 * @param entity The entity.
 	 */
 	public void addEntity(SearchResultEntity entity) {
-		getResult().add(entity);
+		result.add(entity);
+		result.sort(new ResultComparatorByClass());
 		notifyListeners(entity);
 	}
-
+	
 	/**
 	 * Notify,
 	 * @param f entity.
@@ -63,7 +63,7 @@ public class SearchResult implements ISearchResult {
 	/**
 	 * @return Get retrieved results.
 	 */
-  public Collection<SearchResultEntity> getResult() {
+  public List<SearchResultEntity> getResult() {
     return result;
   }
   

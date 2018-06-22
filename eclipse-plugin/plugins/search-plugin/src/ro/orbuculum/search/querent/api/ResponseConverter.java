@@ -9,6 +9,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Converter;
 import ro.orbuculum.Activator;
 import ro.orbuculum.search.querent.Unmarshaller;
+import ro.orbuculum.search.querent.jaxb.Result;
 
 /**
  * Used to automatically unmarshal the HTTP response.

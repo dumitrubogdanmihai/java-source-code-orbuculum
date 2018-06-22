@@ -6,4 +6,6 @@ Bundle-Version: 1.0.0.qualifier
 Require-Bundle: ro.orbuculum.search.plugin,
  ro.orbuculum.indexer.plugin,
  org.junit
+Bundle-ClassPath: .,
+ lib/shaded-maven-dependencies.jar
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

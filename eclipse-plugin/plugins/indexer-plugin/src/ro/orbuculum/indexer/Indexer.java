@@ -27,58 +27,91 @@ public class Indexer {
   /**
    * Indexer API.
    */
-	private IndexerAgentApi restApi;
-	
-	/**
-	 * Console output stream.
-	 */
+  private IndexerAgentApi restApi;
+
+  /**
+   * Console output stream.
+   */
   private OutputStream os;
 
-	/**
-	 * Constructor.
-	 * @param os Where to dump some logs.
-	 */
-	public Indexer(OutputStream os) {
-		this.os = os;
+  /**
+   * Constructor.
+   */
+  public Indexer() {
+    this(null);
+  }
+  /**
+   * Constructor.
+   * @param os Where to dump some logs.
+   */
+  public Indexer(OutputStream os) {
+    this.os = os;
     Retrofit retrofit = new Retrofit.Builder()
-				.baseUrl("http://localhost:8080")
-				.build();
-		restApi = retrofit.create(IndexerAgentApi.class);
-	}
+        .baseUrl("http://localhost:8080/")
+        .build();
+    this.restApi = retrofit.create(IndexerAgentApi.class);
+  }
 
-	/**
-	 * Index currently opened Java projects.
-	 * 
-	 * @throws CoreException
-	 * @throws IOException
-	 */
-	public void indexJavaProjects() throws CoreException, IOException {
-		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		for (IProject project : workspaceRoot.getProjects()) {
-			if (project.isOpen() && project.hasNature(JavaCore.NATURE_ID)) {
-				IPath path = project.getLocation();
-				IJavaProject javaProject = JavaCore.create(project);
-				index(path, javaProject);
-			}
-		}
-	}
+  /**
+   * Index currently opened Java projects.
+   * 
+   * @throws CoreException
+   * @throws IOException
+   */
+  public void indexJavaProjects() throws CoreException, IOException {
+    IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+    for (IProject project : workspaceRoot.getProjects()) {
+      if (project.isOpen() && project.hasNature(JavaCore.NATURE_ID)) {
+        IPath path = project.getLocation();
+        IJavaProject javaProject = JavaCore.create(project);
+        index(path, javaProject);
+      }
+    }
+  }
 
-	private void index(IPath path, IJavaProject javaProject) throws IOException {
-		Call<Void> call = restApi.index(path.toString());
-		call.enqueue(new Callback<Void>() {
-			@Override
-			public void onResponse(Call<Void> call, Response<Void> response) {
-			  try {
-          os.write((response.message() + response.code() + "\n").getBytes());
+  /**
+   * Index Java project.
+   * 
+   * @param path          Fully qualified project path.
+   * @param javaProject   The project.
+   * 
+   * @throws IOException
+   */
+  private void index(IPath path, IJavaProject javaProject) throws IOException {
+    Call<Void> call = getRestApi().index(path.toString());
+    call.enqueue(new Callback<Void>() {
+      @Override
+      public void onResponse(Call<Void> call, Response<Void> response) {
+        try {
+          if (os != null) {
+            os.write((response.message() + response.code() + "\n").getBytes());
+          }
         } catch (IOException e) {
           Activator.getDefault().getLog().log(new Status(Status.ERROR, Activator.PLUGIN_ID, e.toString(), e)); 
         }
-			}
+      }
 
-			@Override
-			public void onFailure(Call<Void> call, Throwable e) {
-			  Activator.getDefault().getLog().log(new Status(Status.ERROR, Activator.PLUGIN_ID, e.toString(), e)); 
-			}
-		});
-	}
+      @Override
+      public void onFailure(Call<Void> call, Throwable e) {
+        try {
+          if (os != null) {
+            os.write(("Indexing failed: " + e.toString()).getBytes());
+            os.write(call.toString().getBytes());
+          } else {
+            System.err.println("Indexing failed: " + e + " " + call);
+            e.printStackTrace();
+          }
+        } catch (IOException e1) {
+          Activator.getDefault().getLog().log(new Status(Status.ERROR, Activator.PLUGIN_ID, e.toString(), e)); 
+        }
+      }
+    });
+  }
+
+  /**
+   * @return    Indexer-agent API.
+   */
+  public IndexerAgentApi getRestApi() {
+    return restApi;
+  }
 }

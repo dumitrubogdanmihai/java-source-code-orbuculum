@@ -36,8 +36,14 @@ public class SearchPage implements ISearchPage {
 	@Override
 	public void createControl(Composite arg0) {
 	  this.control = arg0;
-		this.text = new Text(arg0, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
+		this.text = new Text(arg0,  SWT.CANCEL | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
 		this.text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
+		this.text.setText("Insert your query as the exaple below:\n"
+        + "class:Controller\n"
+        + "method:build\n"
+        + "call:factory\n"
+        + "keyword:new");
+		this.text.selectAll();
 	}
 
 	@Override

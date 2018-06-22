@@ -1,15 +1,14 @@
 package ro.orbuculum.search.querent.api;
 
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-
-import org.eclipse.core.runtime.Status;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import ro.orbuculum.Activator;
+import ro.orbuculum.search.querent.jaxb.Result;
 
 /**
  * Solr server interface.
@@ -47,6 +46,45 @@ public class Solr {
       .build();
 
   /**
+   * Query Solr index synchronously for all documents.
+   * 
+   * @return Parsed response.
+   */
+  public static Result get() {
+    return get(null);
+  }
+  
+  /**
+   * Query Solr index synchronously.
+   * 
+   * @param q Query. May be <code>null</code>.
+   * 
+   * @return Parsed response.
+   */
+  public static Result get(String q) {
+    final AtomicReference<Result> resultRef = new AtomicReference<Result>();
+    
+    get(null, new Consumer<Result>() {
+      public void accept(Result r) {
+        resultRef.set(r);
+        synchronized (resultRef) {
+          resultRef.notifyAll();
+        }
+      }
+    });
+  
+    synchronized (resultRef) {
+      try {
+        resultRef.wait(2000);
+      } catch (InterruptedException e) {
+        // Ignore.
+      }
+    }
+    
+    return resultRef.get();
+  }
+
+  /**
    * Query Solr index.
    * 
    * @param q Query.
@@ -67,7 +105,8 @@ public class Solr {
       
       @Override
       public void onFailure(Call<Result> arg0, Throwable e) {
-        Activator.getDefault().getLog().log(new Status(Status.ERROR, Activator.PLUGIN_ID, e.toString(), e)); 
+        e.printStackTrace();
+//        Activator.getDefault().getLog().log(new Status(Status.ERROR, Activator.PLUGIN_ID, e.toString(), e)); 
         consumer.accept(null);
       }
     });

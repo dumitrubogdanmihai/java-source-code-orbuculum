@@ -9,7 +9,7 @@ import retrofit2.http.Query;
  * 
  * @author bogdan
  */
-interface IndexerAgentApi {
-  @POST("/api/agent/index")
+public interface IndexerAgentApi {
+  @POST("/api/index")
   Call<Void> index(@Query("projectPath") String projectPath);
 }

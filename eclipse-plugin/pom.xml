@@ -1,0 +1,16 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>ro.orbuculum</groupId>
+	<artifactId>reactor-pom</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<modules>
+		<module>parent-pom</module>
+		<module>plugins/indexer-plugin</module>
+		<module>plugins/search-plugin</module>
+		<module>feature</module>
+		<module>updatesite</module>
+		<module>tests</module>
+	</modules>
+</project>

@@ -18,6 +18,6 @@ Import-Package: org.eclipse.core.internal.resources,
  org.eclipse.jdt.core,
  org.eclipse.ui.ide,
  org.eclipse.ui.texteditor
-Bundle-ClassPath: .,
- lib/shaded-maven-dependencies.jar
+Bundle-ClassPath: lib/shaded-maven-dependencies.jar,
+ .
 Export-Package: ro.orbuculum.search.querent.api

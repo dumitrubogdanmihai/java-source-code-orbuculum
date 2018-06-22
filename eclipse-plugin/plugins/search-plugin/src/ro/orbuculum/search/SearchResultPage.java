@@ -6,7 +6,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
+import org.eclipse.jdt.internal.ui.javaeditor.JavaSourceViewer;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -36,10 +37,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.IPageSite;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 
 import ro.orbuculum.Activator;
-import ro.orbuculum.search.querent.api.Fields;
 
 /**
  * Page where search results are presented.
@@ -101,7 +101,8 @@ public class SearchResultPage implements ISearchResultPage, ISearchResultListene
           ro.orbuculum.search.SearchResultEvent event = (ro.orbuculum.search.SearchResultEvent) e;
           SearchResultEntity newEntity = event.getAddedEntity();
           System.err.println("New entity: "+ newEntity);
-          ArrayList<SearchResultEntity> result = (ArrayList<SearchResultEntity>) SearchResultPage.this.searchResult.getResult();
+          ArrayList<SearchResultEntity> result = 
+              (ArrayList<SearchResultEntity>) SearchResultPage.this.searchResult.getResult();
           SearchResultPage.this.viewer.setInput(result);
         }
       });
@@ -193,22 +194,26 @@ public class SearchResultPage implements ISearchResultPage, ISearchResultListene
         ISelection selection = viewer.getSelection();
         ro.orbuculum.search.SearchResultEntity entity = (SearchResultEntity) ((IStructuredSelection)selection).getFirstElement();
         try {
-          entity.get(Fields.PATH);
-          IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(entity.get(Fields.PROJECT));
-          IFile file = project.getFile(entity.get(Fields.PATH));
+          IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(entity.getProject());
+          IFile file = project.getFile(entity.getPath());
           IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 
-          AbstractTextEditor editor = (AbstractTextEditor) IDE.openEditor(activePage, file);
+          
+          CompilationUnitEditor editor = (CompilationUnitEditor) IDE.openEditor(activePage, file);
+          IDocumentProvider documentProvider = editor.getDocumentProvider();
+          JavaSourceViewer viewer2 = (JavaSourceViewer) editor.getViewer();
+          System.err.println("documentProvider:"+documentProvider);
+          System.err.println();
           IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
-          int from = Integer.parseInt(entity.get(Fields.OFFSET_START));
-          int end = Integer.parseInt(entity.get(Fields.OFFSET_END));
-          try {
-            int startOffset = document.getLineOffset(from - 1);
-            int endOffset = document.getLineOffset(end) - 1;
-            editor.selectAndReveal(startOffset, endOffset - startOffset);
-          } catch (BadLocationException e) {   
-            Activator.getDefault().getLog().log(new Status(Status.ERROR, Activator.PLUGIN_ID, e.toString(), e)); 
-          }
+//          int from = Integer.parseInt(entity.get(Fields.OFFSET_START));
+//          int end = Integer.parseInt(entity.get(Fields.OFFSET_END));
+//          try {
+//            int startOffset = document.getLineOffset(from - 1);
+//            int endOffset = document.getLineOffset(end) - 1;
+//            editor.selectAndReveal(startOffset, endOffset - startOffset);
+//          } catch (BadLocationException e) {   
+//            Activator.getDefault().getLog().log(new Status(Status.ERROR, Activator.PLUGIN_ID, e.toString(), e)); 
+//          }
         } catch (PartInitException e) {
           Activator.getDefault().getLog().log(new Status(Status.ERROR, Activator.PLUGIN_ID, e.toString(), e)); 
         }
@@ -227,7 +232,7 @@ public class SearchResultPage implements ISearchResultPage, ISearchResultListene
       @Override
       public String getText(Object element) {
         SearchResultEntity entity = (SearchResultEntity) element;
-        return entity.get(Fields.CLASS);
+        return entity.getClassName();
       }
     });
 
@@ -238,7 +243,7 @@ public class SearchResultPage implements ISearchResultPage, ISearchResultListene
       @Override
       public String getText(Object element) {
         SearchResultEntity entity = (SearchResultEntity) element;
-        return entity.get(Fields.METHOD);
+        return entity.getMethod();
       }
     });
   }

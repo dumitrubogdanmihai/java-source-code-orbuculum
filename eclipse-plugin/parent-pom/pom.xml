@@ -24,11 +24,4 @@
 			<url>http://download.eclipse.org/releases/neon/</url>
 		</repository>
 	</repositories>
-	<modules>
-		<module>../plugins/indexer-plugin</module>
-		<module>../plugins/search-plugin</module>
-		<module>../feature</module>
-		<module>../updatesite</module>
-		<module>../tests</module>
-	</modules>
 </project>

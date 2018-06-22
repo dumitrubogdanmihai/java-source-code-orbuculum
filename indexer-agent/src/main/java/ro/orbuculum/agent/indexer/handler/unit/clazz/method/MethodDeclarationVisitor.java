@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
@@ -15,9 +14,9 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 
+import ro.orbuculum.agent.indexer.handler.BindingsResolver;
 import ro.orbuculum.agent.indexer.handler.Context;
 import ro.orbuculum.agent.indexer.handler.Visitor;
-import ro.orbuculum.agent.indexer.handler.BindingsResolver;
 import ro.orbuculum.agent.indexer.handler.unit.clazz.method.block.BlockStmtVisitor;
 
 /**
@@ -90,10 +89,10 @@ public class MethodDeclarationVisitor implements Visitor {
   }
 
   @Override
-  public void commit(SolrClient solr) {
+  public void commit() {
     try {
-      solr.add(document);
-      UpdateResponse response = solr.commit();
+      this.context.getSolrClient().add(document);
+      UpdateResponse response = this.context.getSolrClient().commit();
       int status = response.getStatus();
       if (status != 102) {
         logger.warn(response);

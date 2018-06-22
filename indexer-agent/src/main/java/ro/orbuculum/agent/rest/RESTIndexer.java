@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -22,7 +23,7 @@ import ro.orbuculum.agent.indexer.Parser;
  * 
  * @author bogdan
  */
-@Path("/api/agent")
+@Path("/api/")
 public class RESTIndexer {
   /**
    * Logger.
@@ -44,6 +45,8 @@ public class RESTIndexer {
   public Response index(
       @QueryParam("projectPath") String projectPath) 
           throws SolrServerException, IOException {
+    System.out.println(projectPath);
+    
     AstIndexer indexer = new AstIndexer("8983", "orbuculum");
     File project = new File(projectPath);
 
@@ -60,5 +63,11 @@ public class RESTIndexer {
     });
 
     return Response.ok().build();
+  }
+  
+ @GET
+ @Path("index")
+ public Response index() {
+   return Response.ok().build();
   }
 }

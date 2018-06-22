@@ -3,15 +3,14 @@ package ro.orbuculum.agent.indexer.handler.unit.clazz.method.block.expr.call;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.common.SolrInputDocument;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 
+import ro.orbuculum.agent.indexer.handler.BindingsResolver;
 import ro.orbuculum.agent.indexer.handler.Context;
 import ro.orbuculum.agent.indexer.handler.Visitor;
-import ro.orbuculum.agent.indexer.handler.BindingsResolver;
 
 /**
  * Method call visitor.
@@ -59,7 +58,7 @@ public class MethodCallExprVisitor implements Visitor {
 	}
 
 	@Override
-	public void commit(SolrClient client) {
+	public void commit() {
 		if (node instanceof MethodCallExpr) {
 			MethodCallExpr call = (MethodCallExpr) node;
 			document.addField("method-call", BindingsResolver.resolveMethodCall(call, context));
