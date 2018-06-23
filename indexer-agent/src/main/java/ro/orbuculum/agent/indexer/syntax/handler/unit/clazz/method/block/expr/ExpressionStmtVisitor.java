@@ -1,4 +1,4 @@
-package ro.orbuculum.agent.indexer.handler.unit.clazz.method.block.expr;
+package ro.orbuculum.agent.indexer.syntax.handler.unit.clazz.method.block.expr;
 
 import java.util.Arrays;
 import java.util.List;
@@ -8,9 +8,9 @@ import org.apache.solr.common.SolrInputDocument;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 
-import ro.orbuculum.agent.indexer.handler.Context;
-import ro.orbuculum.agent.indexer.handler.Visitor;
-import ro.orbuculum.agent.indexer.handler.unit.clazz.method.block.expr.call.MethodCallExprVisitor;
+import ro.orbuculum.agent.indexer.syntax.handler.Context;
+import ro.orbuculum.agent.indexer.syntax.handler.Visitor;
+import ro.orbuculum.agent.indexer.syntax.handler.unit.clazz.method.block.expr.call.MethodCallExprVisitor;
 
 /**
  * Expression visitor that delegate to method call visitor.

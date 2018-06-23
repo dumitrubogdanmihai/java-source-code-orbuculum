@@ -1,4 +1,4 @@
-package ro.orbuculum.agent.indexer.handler.unit.clazz.method;
+package ro.orbuculum.agent.indexer.syntax.handler.unit.clazz.method;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -14,10 +14,10 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 
-import ro.orbuculum.agent.indexer.handler.BindingsResolver;
-import ro.orbuculum.agent.indexer.handler.Context;
-import ro.orbuculum.agent.indexer.handler.Visitor;
-import ro.orbuculum.agent.indexer.handler.unit.clazz.method.block.BlockStmtVisitor;
+import ro.orbuculum.agent.indexer.syntax.handler.BindingsResolver;
+import ro.orbuculum.agent.indexer.syntax.handler.Context;
+import ro.orbuculum.agent.indexer.syntax.handler.Visitor;
+import ro.orbuculum.agent.indexer.syntax.handler.unit.clazz.method.block.BlockStmtVisitor;
 
 /**
  * The main visitor, as the Solr schema was designed that each document represents a method, not a class.

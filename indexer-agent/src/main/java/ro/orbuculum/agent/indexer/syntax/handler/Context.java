@@ -1,8 +1,7 @@
-package ro.orbuculum.agent.indexer.handler;
+package ro.orbuculum.agent.indexer.syntax.handler;
 
-import org.kohsuke.github.GHCommit.File;
-import org.kohsuke.github.GHRepository;
 import org.apache.solr.client.solrj.SolrClient;
+import org.kohsuke.github.GHRepository;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;

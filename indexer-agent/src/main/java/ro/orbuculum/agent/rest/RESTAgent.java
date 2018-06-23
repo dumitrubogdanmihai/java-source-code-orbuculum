@@ -1,22 +1,19 @@
 package ro.orbuculum.agent.rest;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
-import javax.ws.rs.GET;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
-import org.apache.http.HttpStatus;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.SolrServerException;
 
-import ro.orbuculum.agent.indexer.AstIndexer;
-import ro.orbuculum.agent.indexer.Parser;
+import ro.orbuculum.agent.Agent;
+import ro.orbuculum.agent.indexer.syntax.AstIndexer;
 
 /**
  * The plug-in tells me what should be indexed.
@@ -30,31 +27,52 @@ public class RESTAgent {
    */
   private static final Logger logger = LogManager.getLogger(RESTAgent.class);
 
-  @POST
-  @Path("setAuthToken")
-  public Response index(
-      @QueryParam("authToken") String authToken) 
-          throws SolrServerException, IOException {
-    
-    
-    
-//    System.out.println(projectPath);
-//    
-//    AstIndexer indexer = new AstIndexer("8983", "orbuculum");
-//    File project = new File(projectPath);
-//
-//    // Iterate over Java source files and index them.
-//    Files.walk(project.toPath())
-//    .filter(f -> f.toString().endsWith(".java"))
-//    .map(s -> new File(s.toUri()))
-//    .forEach(source -> {
-//      try {
-//        indexer.index(Parser.parse(source), project, source);
-//      } catch (SolrServerException | IOException e) {
-//        logger.warn(e, e);
-//      }
-//    });
+  /**
+   * Employed to keep Solr index updated.
+   */
+  private Agent agent;
 
+  /**
+   * Constructor.
+   */
+  public RESTAgent() {
+    AstIndexer indexer = new AstIndexer();
+    this.agent = new Agent(indexer);
+  }
+
+  /**
+   * Give agent access to Github repositories.
+   * 
+   * @param oauthAccessToke Token.
+   * 
+   * @return 200 or 400.
+   */
+  @POST
+  @Path("setOauthAccessToken")
+  public Response index(
+      @FormParam("oauthAccessToken") String oauthAccessToken) {
+    try {
+      agent.setAuthToken(oauthAccessToken);
+      return Response.ok().build();
+    } catch (IOException e) {
+      logger.error(e, e);
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+  }
+
+  /**
+   * Tell agent to start tracking repository.
+   * This would translate to: "Take care of him to be indexed from now on".
+   * 
+   * @param oauthAccessToke Token.
+   * 
+   * @return 200 or 400.
+   */
+  @POST
+  @Path("setOauthAccessToken")
+  public Response startTrackingRepository(
+      @PathParam("repo") String repo) {
+    agent.startTrackingRepository(repo);
     return Response.ok().build();
   }
 }

@@ -1,4 +1,4 @@
-package ro.orbuculum.agent.indexer.handler.unit.clazz;
+package ro.orbuculum.agent.indexer.syntax.handler.unit.clazz;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -10,13 +10,10 @@ import org.apache.solr.client.solrj.SolrServerException;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 
-import ro.orbuculum.agent.indexer.handler.BindingsResolver;
-import ro.orbuculum.agent.indexer.handler.Context;
-import ro.orbuculum.agent.indexer.handler.Visitor;
-import ro.orbuculum.agent.indexer.handler.unit.clazz.method.MethodDeclarationVisitor;
-
-import org.slf4j.MDC;
-import org.slf4j.spi.MDCAdapter;
+import ro.orbuculum.agent.indexer.syntax.handler.BindingsResolver;
+import ro.orbuculum.agent.indexer.syntax.handler.Context;
+import ro.orbuculum.agent.indexer.syntax.handler.Visitor;
+import ro.orbuculum.agent.indexer.syntax.handler.unit.clazz.method.MethodDeclarationVisitor;
 /**
  * Class visitor that only delegates to the method visitor.
  * 

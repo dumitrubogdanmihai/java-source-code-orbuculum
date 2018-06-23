@@ -1,4 +1,4 @@
-package ro.orbuculum.agent.indexer.handler;
+package ro.orbuculum.agent.indexer.syntax.handler;
 
 import java.util.List;
 import java.util.Optional;

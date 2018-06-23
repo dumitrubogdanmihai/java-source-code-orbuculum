@@ -1,4 +1,4 @@
-package ro.orbuculum.agent.indexer.handler.unit;
+package ro.orbuculum.agent.indexer.syntax.handler.unit;
 
 import java.util.Arrays;
 import java.util.List;
@@ -6,9 +6,9 @@ import java.util.List;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
-import ro.orbuculum.agent.indexer.handler.Context;
-import ro.orbuculum.agent.indexer.handler.Visitor;
-import ro.orbuculum.agent.indexer.handler.unit.clazz.ClassOrInterfaceDeclarationVisitor;
+import ro.orbuculum.agent.indexer.syntax.handler.Context;
+import ro.orbuculum.agent.indexer.syntax.handler.Visitor;
+import ro.orbuculum.agent.indexer.syntax.handler.unit.clazz.ClassOrInterfaceDeclarationVisitor;
 
 /**
  * Root visitor that only delegates to the class visitor.

@@ -9,6 +9,8 @@ import org.apache.solr.common.SolrInputDocument;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
+import ro.orbuculum.agent.indexer.syntax.AstIndexer;
+
 /**
  * Asserts the data that {@link AstIndexer} manage to extract from the AST.
  * 

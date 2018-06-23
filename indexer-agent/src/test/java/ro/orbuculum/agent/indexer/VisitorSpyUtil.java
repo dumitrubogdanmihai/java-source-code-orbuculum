@@ -20,6 +20,7 @@ import org.mockito.ArgumentCaptor;
 import com.github.javaparser.ast.CompilationUnit;
 
 import junit.framework.Assert;
+import ro.orbuculum.agent.indexer.syntax.AstIndexer;
 
 /**
  * Handle Mockito staff and intercept the documents that would be indexed.

@@ -1,47 +1,84 @@
 package ro.orbuculum.agent;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.apache.solr.client.solrj.SolrServerException;
-import org.kohsuke.github.GHBranch;
-import org.kohsuke.github.GHCommit;
-import org.kohsuke.github.GHCommit.File;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.kohsuke.github.GHRepository;
-import org.kohsuke.github.GHTree;
-import org.kohsuke.github.GHTreeEntry;
 import org.kohsuke.github.GitHub;
 
-import com.github.javaparser.ast.CompilationUnit;
-
-import ro.orbuculum.agent.indexer.AstIndexer;
 import ro.orbuculum.agent.indexer.Parser;
+import ro.orbuculum.agent.indexer.github.GithubGrossIndexer;
+import ro.orbuculum.agent.indexer.github.GithubSparseIndexer;
+import ro.orbuculum.agent.indexer.syntax.AstIndexer;
 
+/**
+ * Ensure that Solr index is synchronized with repositories changes.</br></br>
+ * 
+ * Basically "to index" means that I will look into chosen repositories for *.java files
+ * that will be parsed arising the AbstractSyntaxTree
+ * who will provide the semantic part which will be then stored (indexed) 
+ * in a database (in the "orbuculum" Solr core).
+ *  
+ * @author bogdan
+ */
 public class Agent {
-  private Map<String,String> ledger = new HashMap<>();
-  private AstIndexer indexer;
+  /**
+   * Logger.
+   */
+  private static final Logger logger = LogManager.getLogger(Agent.class);
+
+  /**
+   * Connector.
+   */
   private GitHub github;
 
-  public Agent(AstIndexer indexer) throws IOException {
-    this.indexer = indexer;
-    github = GitHub.connectUsingPassword("dumitrumihaibogdan@gmail.com", "THIS_IS_NOT_MY_PASSWORD");
+  /**
+   * Used to index hot commits.
+   */
+  private GithubSparseIndexer githubSparseIndexer;
+
+  /**
+   * Used to index a whole new repository.
+   */
+  private GithubGrossIndexer githubIndexer;
+
+  /**
+   * Map repository to last indexed sha1.
+   */
+  private Map<String,String> ledger = new HashMap<>();
+
+  /**
+   * Query Github for new commits.
+   */
+  private Timer timer;
+
+  /**
+   * Constructor.
+   * 
+   * @param indexer Used to parse raw java files.
+   */
+  public Agent(AstIndexer indexer) {
+    Parser parser = new Parser();
+    this.githubSparseIndexer = new GithubSparseIndexer(parser, indexer);
+    this.githubIndexer = new GithubGrossIndexer(parser, indexer);
+    this.timer = new Timer();
   }
 
-
-  public static void main(String[] args) throws IOException {
-    Agent agent = new Agent(new AstIndexer());
-    agent.addRepository("dumitrubogdanmihai/java-source-code-orbuculum");
-    agent.updateIndex();
-  }
-
+  /**
+   * Give access to Github repositories.
+   * 
+   * @param oauthAccessToken  Token.
+   * https://help.github.com/articles/git-automation-with-oauth-tokens/
+   * 
+   * @throws IOException
+   */
   public void setAuthToken(String oauthAccessToken) throws IOException {
     github = GitHub.connectUsingOAuth(oauthAccessToken);
-    Timer timer = new Timer();
     timer.scheduleAtFixedRate(
         new TimerTask() {
           @Override
@@ -51,150 +88,39 @@ public class Agent {
         }, 2000, 2000);
   }
 
-  public void addRepository(String repo) {
-    ledger.put(repo, "7b2035c");
+  /**
+   * Put under the magnifying glass a repo.
+   * Will index current state end every commit from now on.
+   * 
+   * @param repo
+   */
+  public void startTrackingRepository(String repo) {
+    ledger.put(repo, null);
   }
 
+  /**
+   * Update Solr index accordingly to the ledger.
+   */
   private void updateIndex() {
     for (String repoName : ledger.keySet()) {
-      String sha1 = ledger.get(repoName);
+      String lastSha1Indexer = ledger.get(repoName);
 
       GHRepository repo = null;
       try {
         repo = github.getRepository(repoName);
-      } catch (IOException e1) {
-        e1.printStackTrace();
+      } catch (IOException e) {
+        logger.error(e, e);
       }
 
       if (repo != null) {
-        if (sha1 != null) {
-          ;
-          try {
-            String sha1Head = repo.getBranch("master").getSHA1();
-            GHCommit iCommit = repo.getCommit(sha1Head);
-            while (!iCommit.getSHA1().equals(sha1)) {
-              System.err.println("\niCommit: " + iCommit.getSHA1());
-              
-              List<File> files = null;
-              if (repo != null) {
-                files =  getFilesToIndex(repo, iCommit.getSHA1());
-              }
-              for (File f : files) {
-                System.err.println(f.getFileName());
-              }
-              
-              if (files != null) {
-                indexFiles(files, repo);
-              }
-              
-              if (iCommit.getParents().isEmpty()) {
-                iCommit = null;
-              } else {
-                iCommit = iCommit.getParents().get(0);
-              }
-            }
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
+        String sha1 = lastSha1Indexer;
+        if (lastSha1Indexer != null) {
+          sha1 = githubSparseIndexer.indexSince(lastSha1Indexer, repo);
         } else {
-          List<GHTreeEntry> allEntriesToIndex = getAllEntriesToIndex(repo);
-          if (allEntriesToIndex != null) {
-            indexEntries(allEntriesToIndex, repo);
-          }
+          sha1 = githubIndexer.indexWhole(repo);
         }
+        ledger.put(repoName, sha1);
       }
     }
-  }
-
-  private void indexFiles(List<File> files, GHRepository repo) {
-    for (File file : files) {
-      if (!("removed".equals(file.getStatus()))) {
-        try {
-          String fileName = file.getFileName();
-          if (fileName.endsWith(".java")) {
-            CompilationUnit parse = Parser.parse(repo.getFileContent(fileName).read());
-            try {
-              indexer.index(parse, repo, file.getFileName());
-            } catch (SolrServerException | IOException e) {
-              e.printStackTrace();
-            }
-          }
-        } catch (IOException e1) {
-          e1.printStackTrace();
-        }
-      }
-    }
-  }
-
-
-  private void indexEntries(List<GHTreeEntry> entries, GHRepository repo) {
-    for (GHTreeEntry entry : entries) {
-      String filePath = entry.getPath();
-      if (filePath.endsWith(".java")) {
-        try {
-          CompilationUnit parse = Parser.parse(entry.readAsBlob());
-          indexer.index(parse, repo, filePath);
-        } catch (SolrServerException | IOException e) {
-          e.printStackTrace();
-        }
-      }
-    }
-  }
-
-  private  List<File> getFilesToIndex(GHRepository repo, String sha1) {
-    GHCommit commit = null;
-    if (repo != null) {
-      try {
-        commit = repo.getCommit(sha1).getParents().get(0);
-      } catch (IOException e1) {
-        e1.printStackTrace();
-      }
-    }
-    List<File> files = null;
-    if (commit != null) {
-      try {
-        files = commit.getFiles();
-      } catch (IOException e1) {
-        e1.printStackTrace();
-      }
-    }
-    return files;
-  }
-
-
-  private  List<GHTreeEntry> getAllEntriesToIndex(GHRepository repo) {
-    try {
-      GHBranch branch = repo.getBranch(repo.getDefaultBranch());
-      GHTree tree = repo.getTreeRecursive(branch.getSHA1(), 1);
-      return collectFilesRecurively(tree);
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    return null;
-  }
-
-  private List<GHTreeEntry> collectFilesRecurively(GHTree tree) {
-    List<GHTreeEntry> toReturn = new ArrayList<>();
-    int size = tree.getTree().size();
-    for (int i = 0; i < size; i++) {
-      GHTreeEntry entry = tree.getTree().get(i);
-      switch (entry.getType()) {
-      case "blob":
-        toReturn.add(entry);
-        break;
-      case "tree":
-        try {
-          toReturn.addAll(collectFilesRecurively(entry.asTree()));
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-        break;
-      default: 
-        System.err.println("Unknown " + entry.getType());
-        break;
-      }
-    }
-    return toReturn;
   }
 }

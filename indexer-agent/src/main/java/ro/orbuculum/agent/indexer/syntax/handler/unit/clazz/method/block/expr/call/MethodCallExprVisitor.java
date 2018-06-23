@@ -1,4 +1,4 @@
-package ro.orbuculum.agent.indexer.handler.unit.clazz.method.block.expr.call;
+package ro.orbuculum.agent.indexer.syntax.handler.unit.clazz.method.block.expr.call;
 
 import java.util.Arrays;
 import java.util.List;
@@ -8,9 +8,9 @@ import org.apache.solr.common.SolrInputDocument;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 
-import ro.orbuculum.agent.indexer.handler.BindingsResolver;
-import ro.orbuculum.agent.indexer.handler.Context;
-import ro.orbuculum.agent.indexer.handler.Visitor;
+import ro.orbuculum.agent.indexer.syntax.handler.BindingsResolver;
+import ro.orbuculum.agent.indexer.syntax.handler.Context;
+import ro.orbuculum.agent.indexer.syntax.handler.Visitor;
 
 /**
  * Method call visitor.
