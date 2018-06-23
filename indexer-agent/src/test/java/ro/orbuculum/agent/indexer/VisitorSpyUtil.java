@@ -19,6 +19,8 @@ import org.mockito.ArgumentCaptor;
 
 import com.github.javaparser.ast.CompilationUnit;
 
+import junit.framework.Assert;
+
 /**
  * Handle Mockito staff and intercept the documents that would be indexed.
  * 
@@ -48,8 +50,10 @@ public class VisitorSpyUtil {
     when(solrClientMock.commit()).thenReturn(responseMock);
 
     // Then...
-    CompilationUnit parsedSource = Parser.parse(sampleSource);
-    indexerSpy.index(parsedSource, new File(".").getCanonicalFile(), sampleSource);
+    //TODO: uncomment and fix compile errors 
+    Assert.fail();
+//    CompilationUnit parsedSource = Parser.parse(sampleSource);
+//    indexerSpy.index(parsedSource, new File(".").getCanonicalFile(), sampleSource);
 
     ArgumentCaptor<SolrInputDocument> captor = ArgumentCaptor.forClass(SolrInputDocument.class);
     verify(solrClientMock, times(documents)).add(captor.capture());

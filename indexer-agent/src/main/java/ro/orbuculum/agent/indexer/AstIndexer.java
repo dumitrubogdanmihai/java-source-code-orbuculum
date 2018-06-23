@@ -1,6 +1,8 @@
 package ro.orbuculum.agent.indexer;
 
-import java.io.File;
+import org.kohsuke.github.GHCommit.File;
+import org.kohsuke.github.GHRepository;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +32,10 @@ public class AstIndexer {
    */
   private final SolrClient solr;
 
+  public AstIndexer() {
+    this("8983", "orbuculum");
+  }
+  
   /**
    * Constructor.
    * 
@@ -70,9 +76,9 @@ public class AstIndexer {
    * @throws SolrServerException
    * @throws IOException
    */
-  public void index(CompilationUnit unit, File projectDir, File javaResource) 
+  public void index(CompilationUnit unit, GHRepository repo, String javaResourcePath) 
       throws SolrServerException, IOException {
-    Context context = new Context(this.solr, projectDir, javaResource);
+    Context context = new Context(this.solr, repo, javaResourcePath);
     CompilationUnitVisitor rootHandler = new CompilationUnitVisitor(context);
     index(unit, Arrays.asList(rootHandler));
   }

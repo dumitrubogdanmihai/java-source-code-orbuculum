@@ -3,7 +3,7 @@ package ro.orbuculum.agent;
 import java.util.HashSet;
 import java.util.Set;
 
-import ro.orbuculum.agent.rest.RESTIndexer;
+import ro.orbuculum.agent.rest.RESTAgent;
 
 /**
  * Define components.
@@ -22,7 +22,7 @@ public class Application extends javax.ws.rs.core.Application {
    * Constructor.
    */
   public Application() {
-    singletons.add(new RESTIndexer());
+    singletons.add(new RESTAgent());
   }
 
   @Override

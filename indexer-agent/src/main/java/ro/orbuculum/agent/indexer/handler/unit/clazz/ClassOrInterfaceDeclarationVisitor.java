@@ -43,11 +43,10 @@ public class ClassOrInterfaceDeclarationVisitor implements Visitor {
       context.setClassDeclaration((ClassOrInterfaceDeclaration) node);
       SolrClient solrClient = this.context.getSolrClient();
       try {
-        String project = context.getProjectDir().getName();
         String classId = BindingsResolver.getId(
             context.getCompilationUnit(), 
             context.getClassDeclaration());
-        solrClient.deleteByQuery("project:" + project + " AND class:" + classId);
+        solrClient.deleteByQuery("project:" + context.getRepo().getName() + " AND class:" + classId);
       } catch (SolrServerException | IOException e) {
         e.printStackTrace();
       }

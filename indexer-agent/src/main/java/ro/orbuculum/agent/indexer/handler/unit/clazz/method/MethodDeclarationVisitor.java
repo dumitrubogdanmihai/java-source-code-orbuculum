@@ -56,9 +56,8 @@ public class MethodDeclarationVisitor implements Visitor {
       context.setMethod(method);
 
       document = new SolrInputDocument();
-      document.addField("project", context.getProjectDir().getName());
-      document.addField("path", context.getProjectDir().toURI()
-          .relativize(context.getSourcesFile().toURI()).getPath());
+      document.addField("project", context.getRepo().getName());
+      document.addField("path", context.getSourcesFilePath());
       document.addField("class", 
           BindingsResolver.getId(
               context.getCompilationUnit(), 

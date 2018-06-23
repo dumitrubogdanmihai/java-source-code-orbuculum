@@ -1,7 +1,7 @@
 package ro.orbuculum.agent.indexer.handler;
 
-import java.io.File;
-
+import org.kohsuke.github.GHCommit.File;
+import org.kohsuke.github.GHRepository;
 import org.apache.solr.client.solrj.SolrClient;
 
 import com.github.javaparser.ast.CompilationUnit;
@@ -15,13 +15,13 @@ import com.github.javaparser.ast.body.MethodDeclaration;
  */
 public class Context {
   /**
-   * Project directory.
+   * Repository.
    */
-	private final File projectDir;
+	private final GHRepository repo;
 	/**
 	 * Java source file.
 	 */
-	private final File sourcesFile;
+	private final String sourcesFilePath;
 	/**
 	 * Compilation unit node.
 	 */
@@ -46,17 +46,27 @@ public class Context {
 	 * @param projectDir   Project directory.
 	 * @param sourcesFile  Source file.
 	 */
-	public Context(SolrClient solrClient, File projectDir, File sourcesFile) {
+	public Context(SolrClient solrClient, GHRepository repo, String sourcesFilePath) {
 		this.solrClient = solrClient;
-    this.projectDir = projectDir;
-		this.sourcesFile = sourcesFile;
+    this.repo = repo;
+		this.sourcesFilePath = sourcesFilePath;
 	}
 	
-	public File getSourcesFile() {
-		return sourcesFile;
+	public boolean isClassInSamePackage(String className) {
+	  String relativeFile = new java.io.File(sourcesFilePath).getParent() + className + ".java";
+	  try {
+	    repo.getFileContent(relativeFile);
+	    return true;
+	  } catch (Exception e) {
+      return false;
+    }
 	}
-	public File getProjectDir() {
-		return projectDir;
+	
+	public String getSourcesFilePath() {
+		return sourcesFilePath;
+	}
+	public GHRepository getRepo() {
+		return repo;
 	}
 
 	public CompilationUnit getCompilationUnit() {

@@ -46,12 +46,9 @@ public class BindingsResolver {
 		}
 
 		// Look for classes from the same package.
-		String[] list = context.getSourcesFile().getParentFile()
-				.list((dir, name) -> name.equals(className + ".java"));
-		if (list != null && list.length != 0) {
-			String pckge = context.getCompilationUnit().getPackage().getName().toString();
-			return pckge + "." + className;
-
+		if (context.isClassInSamePackage(className)) {
+		  String pckge = context.getCompilationUnit().getPackage().getName().toString();
+		  return pckge + "." + className;
 		}
 
 		// Look inside 'java.lang'
@@ -64,7 +61,7 @@ public class BindingsResolver {
 
 		if (!Character.isLowerCase(className.charAt(0))) {
 		  logger.warn("Cannot resolve class name \"" + className + "\"" 
-		      + " from " + context.getSourcesFile());
+		      + " from " + context.getSourcesFilePath());
 		}
 
 		// May be a primitive type.
