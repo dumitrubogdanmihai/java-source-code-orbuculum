@@ -1,11 +1,12 @@
 package ro.orbuculum.agent.indexer.syntax.handler;
 
 import org.apache.solr.client.solrj.SolrClient;
-import org.kohsuke.github.GHRepository;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+
+import ro.orbuculum.agent.indexer.syntax.handler.fs.FsAccess;
 
 /**
  * Updated and passed around from one visitor to another.
@@ -13,14 +14,14 @@ import com.github.javaparser.ast.body.MethodDeclaration;
  * @author bogdan
  */
 public class Context {
-  /**
-   * Repository.
-   */
-	private final GHRepository repo;
 	/**
 	 * Java source file.
 	 */
 	private final String sourcesFilePath;
+  /**
+   * Project name.
+   */
+  private final String project;
 	/**
 	 * Compilation unit node.
 	 */
@@ -38,6 +39,11 @@ public class Context {
 	 * Solr client.
 	 */
   private SolrClient solrClient;
+  
+  /**
+   * Query abstract file system.
+   */
+  private FsAccess fsAccess;
 	
 	/**
 	 * Constructor.
@@ -45,27 +51,19 @@ public class Context {
 	 * @param projectDir   Project directory.
 	 * @param sourcesFile  Source file.
 	 */
-	public Context(SolrClient solrClient, GHRepository repo, String sourcesFilePath) {
+	public Context(
+	    SolrClient solrClient, 
+	    String project, 
+	    String sourcesFilePath, 
+	    FsAccess fsAccess) {
 		this.solrClient = solrClient;
-    this.repo = repo;
+    this.project = project;
 		this.sourcesFilePath = sourcesFilePath;
-	}
-	
-	public boolean isClassInSamePackage(String className) {
-	  String relativeFile = new java.io.File(sourcesFilePath).getParent() + className + ".java";
-	  try {
-	    repo.getFileContent(relativeFile);
-	    return true;
-	  } catch (Exception e) {
-      return false;
-    }
+    this.fsAccess = fsAccess;
 	}
 	
 	public String getSourcesFilePath() {
 		return sourcesFilePath;
-	}
-	public GHRepository getRepo() {
-		return repo;
 	}
 
 	public CompilationUnit getCompilationUnit() {
@@ -94,5 +92,13 @@ public class Context {
 
   public SolrClient getSolrClient() {
     return solrClient;
+  }
+
+  public String getProject() {
+    return project;
+  }
+
+  public FsAccess getFsAccess() {
+    return fsAccess;
   }
 }

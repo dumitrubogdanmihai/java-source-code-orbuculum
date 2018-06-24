@@ -16,6 +16,8 @@ import com.github.javaparser.ast.CompilationUnit;
 
 import ro.orbuculum.agent.indexer.Parser;
 import ro.orbuculum.agent.indexer.syntax.AstIndexer;
+import ro.orbuculum.agent.indexer.syntax.handler.fs.FsAccess;
+import ro.orbuculum.agent.indexer.syntax.handler.fs.GithubFsAccess;
 
 /**
  * Index whole repository.
@@ -124,8 +126,10 @@ public class GithubGrossIndexer {
       String filePath = entry.getPath();
       if (filePath.endsWith(".java")) {
         try {
-          CompilationUnit parse = parser.parse(entry.readAsBlob());
-          indexer.index(parse, repo, filePath);
+          CompilationUnit parsed = parser.parse(entry.readAsBlob());
+          String project = repo.getName();
+          FsAccess fsAccess = new GithubFsAccess(repo); 
+          indexer.index(parsed, project, filePath, fsAccess);
         } catch (SolrServerException | IOException e) {
           logger.warn(e, e);
         }

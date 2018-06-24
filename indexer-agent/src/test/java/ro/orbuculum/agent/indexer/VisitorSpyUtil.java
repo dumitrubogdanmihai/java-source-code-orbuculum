@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -19,8 +20,9 @@ import org.mockito.ArgumentCaptor;
 
 import com.github.javaparser.ast.CompilationUnit;
 
-import junit.framework.Assert;
 import ro.orbuculum.agent.indexer.syntax.AstIndexer;
+import ro.orbuculum.agent.indexer.syntax.handler.fs.FsAccess;
+import ro.orbuculum.agent.indexer.syntax.handler.fs.LocalFsAccess;
 
 /**
  * Handle Mockito staff and intercept the documents that would be indexed.
@@ -51,13 +53,15 @@ public class VisitorSpyUtil {
     when(solrClientMock.commit()).thenReturn(responseMock);
 
     // Then...
-    //TODO: uncomment and fix compile errors 
-    Assert.fail();
-//    CompilationUnit parsedSource = Parser.parse(sampleSource);
-//    indexerSpy.index(parsedSource, new File(".").getCanonicalFile(), sampleSource);
-
     ArgumentCaptor<SolrInputDocument> captor = ArgumentCaptor.forClass(SolrInputDocument.class);
-    verify(solrClientMock, times(documents)).add(captor.capture());
+    try(FileInputStream fis = new FileInputStream(sampleSource)) {
+      CompilationUnit parsedSource = new Parser().parse(fis);
+      String project = new File(".").getCanonicalPath();
+      FsAccess fs = new LocalFsAccess();
+      indexerSpy.index(parsedSource, project, sampleSource.getPath(), fs);
+      
+      verify(solrClientMock, times(documents)).add(captor.capture());
+    }
     return captor.getAllValues();
   }
 }

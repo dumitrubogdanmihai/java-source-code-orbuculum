@@ -18,6 +18,8 @@ import com.github.javaparser.ast.CompilationUnit;
 
 import ro.orbuculum.agent.indexer.Parser;
 import ro.orbuculum.agent.indexer.syntax.AstIndexer;
+import ro.orbuculum.agent.indexer.syntax.handler.fs.FsAccess;
+import ro.orbuculum.agent.indexer.syntax.handler.fs.GithubFsAccess;
 
 /**
  * Index hot commits.
@@ -142,7 +144,10 @@ public class GithubSparseIndexer {
             logger.debug("Aaand parse " + fileName);
             CompilationUnit parse = parser.parse(repo.getFileContent(fileName).read());
             try {
-              indexer.index(parse, repo, file.getFileName());
+              String project = repo.getName();
+              String filePath = file.getFileName();
+              FsAccess fsAccess = new GithubFsAccess(repo); 
+              indexer.index(parse, project, filePath , fsAccess);
             } catch (SolrServerException | IOException e) {
               e.printStackTrace();
             }

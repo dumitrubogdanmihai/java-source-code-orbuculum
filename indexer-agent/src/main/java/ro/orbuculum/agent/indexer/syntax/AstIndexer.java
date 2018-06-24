@@ -8,13 +8,13 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient.Builder;
-import org.kohsuke.github.GHRepository;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
 import ro.orbuculum.agent.indexer.syntax.handler.Context;
 import ro.orbuculum.agent.indexer.syntax.handler.Visitor;
+import ro.orbuculum.agent.indexer.syntax.handler.fs.FsAccess;
 import ro.orbuculum.agent.indexer.syntax.handler.unit.CompilationUnitVisitor;
 
 /**
@@ -36,7 +36,7 @@ public class AstIndexer {
     // TODO: At least capture below hardcoded values from environment?
     this("8983", "orbuculum");
   }
-  
+
   /**
    * Constructor.
    * 
@@ -77,9 +77,14 @@ public class AstIndexer {
    * @throws SolrServerException
    * @throws IOException
    */
-  public void index(CompilationUnit unit, GHRepository repo, String javaResourcePath) 
-      throws SolrServerException, IOException {
-    Context context = new Context(this.solr, repo, javaResourcePath);
+  public void index(
+      CompilationUnit unit, 
+      String project, 
+      String javaResourcePath, 
+      FsAccess fsAccess)
+          throws SolrServerException, IOException {
+    // TODO: Context may be instantiated outside?
+    Context context = new Context(this.solr, project, javaResourcePath, fsAccess);
     CompilationUnitVisitor rootHandler = new CompilationUnitVisitor(context);
     index(unit, Arrays.asList(rootHandler));
   }
