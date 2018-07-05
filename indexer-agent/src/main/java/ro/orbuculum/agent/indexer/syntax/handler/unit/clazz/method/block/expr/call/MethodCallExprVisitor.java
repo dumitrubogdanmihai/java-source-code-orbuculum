@@ -46,7 +46,7 @@ public class MethodCallExprVisitor implements Visitor {
 	}
 	
 	@Override
-	public boolean visit(Node node) {
+	public boolean startVisit(Node node) {
 		this.node = node;
 		// Recursively seek for method calls.
 		return true;
@@ -58,7 +58,7 @@ public class MethodCallExprVisitor implements Visitor {
 	}
 
 	@Override
-	public void commit() {
+	public void endVisit() {
 		if (node instanceof MethodCallExpr) {
 			MethodCallExpr call = (MethodCallExpr) node;
 			document.addField("method-call", BindingsResolver.resolveMethodCall(call, context));

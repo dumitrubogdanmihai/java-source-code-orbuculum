@@ -1,13 +1,10 @@
 package ro.orbuculum.agent.rest;
 
-import java.io.IOException;
-
-import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -41,38 +38,34 @@ public class RESTAgent {
   }
 
   /**
-   * Give agent access to Github repositories.
-   * 
-   * @param oauthAccessToke Token.
-   * 
-   * @return 200 or 400.
+   * {@link Agent#startTrackingRepository(String)}
    */
   @POST
-  @Path("setOauthAccessToken")
-  public Response index(
-      @FormParam("oauthAccessToken") String oauthAccessToken) {
-    try {
-      agent.setAuthToken(oauthAccessToken);
-      return Response.ok().build();
-    } catch (IOException e) {
-      logger.error(e, e);
-      return Response.status(Status.BAD_REQUEST).build();
-    }
+  @Path("startTrackingRepository")
+  public Response startTrackingRepository(
+      @QueryParam("repo") String repo) {
+    agent.startTrackingRepository(repo);
+    return Response.ok().build();
+  }
+  
+  /**
+   * {@link Agent#startTrackingRepository(String)}
+   */
+  @GET
+  @Path("startTrackingRepository")
+  public Response startTrackingRepositoryGet(
+      @QueryParam("repo") String repo) {
+    agent.startTrackingRepository(repo);
+    return Response.ok().build();
   }
 
   /**
-   * Tell agent to start tracking repository.
-   * This would translate to: "Take care of him to be indexed from now on".
-   * 
-   * @param oauthAccessToke Token.
-   * 
-   * @return 200 or 400.
+   * {@link Agent#getTrackedRepositories()}
+   * @return
    */
-  @POST
-  @Path("setOauthAccessToken")
-  public Response startTrackingRepository(
-      @PathParam("repo") String repo) {
-    agent.startTrackingRepository(repo);
-    return Response.ok().build();
+  @GET
+  @Path("getTrackedRepositories")
+  public String getTrackedRepositories() {
+    return agent.getTrackedRepositories().toString();
   }
 }

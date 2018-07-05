@@ -18,6 +18,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 import ro.orbuculum.Activator;
 
 /**
@@ -25,7 +26,7 @@ import ro.orbuculum.Activator;
  * 
  * @author bogdan
  */
-public class Indexer {
+public class Api {
   /**
    * Indexer API.
    */
@@ -61,16 +62,17 @@ public class Indexer {
   /**
    * Constructor.
    */
-  public Indexer() {
+  public Api() {
     this(null);
   }
   /**
    * Constructor.
    * @param os Where to dump some logs.
    */
-  public Indexer(OutputStream os) {
+  public Api(OutputStream os) {
     this.os = os;
     Retrofit retrofit = new Retrofit.Builder()
+        .addConverterFactory(ScalarsConverterFactory.create())
         .baseUrl("http://localhost:8080/")
         .client(client)
         .build();

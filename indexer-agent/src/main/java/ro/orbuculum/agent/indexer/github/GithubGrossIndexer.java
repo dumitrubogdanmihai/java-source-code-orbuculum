@@ -1,9 +1,12 @@
 package ro.orbuculum.agent.indexer.github;
 
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
+import org.apache.commons.math3.util.Pair;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -60,7 +63,7 @@ public class GithubGrossIndexer {
    * @return Sha1(commit identifier) to which Solr was updated.
    */
   public String indexWhole(GHRepository repo) {
-    List<GHTreeEntry> allEntriesToIndex = getAllEntriesToIndex(repo);
+    List<Entry<GHTreeEntry, String>> allEntriesToIndex = getAllEntriesToIndex(repo);
     if (allEntriesToIndex != null) {
       indexEntries(allEntriesToIndex, repo);
     }
@@ -81,34 +84,42 @@ public class GithubGrossIndexer {
    * 
    * @return entries to be indexed.
    */
-  private static List<GHTreeEntry> getAllEntriesToIndex(GHRepository repo) {
+  private static List<Entry<GHTreeEntry, String>> getAllEntriesToIndex(GHRepository repo) {
     try {
       GHBranch branch = repo.getBranch(repo.getDefaultBranch());
       GHTree tree = repo.getTreeRecursive(branch.getSHA1(), 1);
-      return collectFilesRecurively(tree);
+      return collectFilesRecurively(tree, "");
     } catch (IOException e) {
       logger.warn(e, e);
     }
     return null;
   }
-  private static List<GHTreeEntry> collectFilesRecurively(GHTree tree) {
-    List<GHTreeEntry> toReturn = new ArrayList<>();
+  private static List<Entry<GHTreeEntry, String>> collectFilesRecurively(GHTree tree, String path) {
+    List<Entry<GHTreeEntry, String>> toReturn = new ArrayList<>();
     int size = tree.getTree().size();
     for (int i = 0; i < size; i++) {
       GHTreeEntry entry = tree.getTree().get(i);
       switch (entry.getType()) {
       case "blob":
-        toReturn.add(entry);
+        AbstractMap.SimpleEntry<GHTreeEntry, String> pair = new AbstractMap.SimpleEntry<GHTreeEntry, String>(entry,  path);
+        toReturn.add(pair);
         break;
       case "tree":
         try {
-          toReturn.addAll(collectFilesRecurively(entry.asTree()));
+          GHTree asTree = entry.asTree();
+          String pathNew = path;
+          if (!pathNew.isEmpty()) {
+            pathNew = pathNew + "/" + entry.getPath();
+          } else {
+            pathNew = entry.getPath();
+          }
+          toReturn.addAll(collectFilesRecurively(asTree, pathNew));
         } catch (IOException e) {
           logger.warn(e, e);
         }
         break;
       default: 
-        logger.info("Unknown " + entry.getType());
+        logger.error("Unknown " + entry.getType());
         break;
       }
     }
@@ -121,17 +132,24 @@ public class GithubGrossIndexer {
    * @param entries Food.
    * @param repo    McDonalds.
    */
-  private void indexEntries(List<GHTreeEntry> entries, GHRepository repo) {
-    for (GHTreeEntry entry : entries) {
+  private void indexEntries(List<Entry<GHTreeEntry, String>> entries, GHRepository repo) {
+    for (Entry<GHTreeEntry, String> e : entries) {
+      GHTreeEntry entry = e.getKey();
       String filePath = entry.getPath();
       if (filePath.endsWith(".java")) {
         try {
           CompilationUnit parsed = parser.parse(entry.readAsBlob());
           String project = repo.getName();
           FsAccess fsAccess = new GithubFsAccess(repo); 
-          indexer.index(parsed, project, filePath, fsAccess);
-        } catch (SolrServerException | IOException e) {
-          logger.warn(e, e);
+          String pth;
+          if (e.getValue().isEmpty()) {
+            pth = filePath;
+          } else {
+            pth = e.getValue() + "/" + filePath;
+          }
+          indexer.index(parsed, project, pth, fsAccess);
+        } catch (SolrServerException | IOException ex) {
+          logger.warn(ex  , ex);
         }
       }
     }

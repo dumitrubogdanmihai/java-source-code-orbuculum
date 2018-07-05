@@ -35,7 +35,7 @@ public class ClassOrInterfaceDeclarationVisitor implements Visitor {
   }
 
   @Override
-  public boolean visit(Node node) {
+  public boolean startVisit(Node node) {
     if (node instanceof  ClassOrInterfaceDeclaration) {
       context.setClassDeclaration((ClassOrInterfaceDeclaration) node);
       SolrClient solrClient = this.context.getSolrClient();

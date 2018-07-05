@@ -50,7 +50,7 @@ public class MethodDeclarationVisitor implements Visitor {
   }
 
   @Override
-  public boolean visit(Node node) {
+  public boolean startVisit(Node node) {
     if (node instanceof  MethodDeclaration) {
       MethodDeclaration method = (MethodDeclaration) node;
       context.setMethod(method);
@@ -88,7 +88,7 @@ public class MethodDeclarationVisitor implements Visitor {
   }
 
   @Override
-  public void commit() {
+  public void endVisit() {
     try {
       this.context.getSolrClient().add(document);
       UpdateResponse response = this.context.getSolrClient().commit();

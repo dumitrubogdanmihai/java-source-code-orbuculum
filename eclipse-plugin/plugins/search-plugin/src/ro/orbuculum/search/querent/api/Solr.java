@@ -126,8 +126,10 @@ public class Solr {
     for (int i = 0; i < projects.length; i++) {
       IProject project = projects[i];
       try {
-        if (project.isOpen() && project.hasNature(JavaCore.NATURE_ID)) {
+        if (project.isOpen()/* && project.hasNature(JavaCore.NATURE_ID)*/) {
           toReturn.add(project.getName());
+        } else {
+          System.err.println("Project : " + project.getName() + "  " + project.isOpen() + " "  + project.hasNature(JavaCore.NATURE_ID));
         }
       } catch (CoreException e) {
         e.printStackTrace();

@@ -31,7 +31,7 @@ public class CompilationUnitVisitor implements Visitor {
   }
 
   @Override
-  public boolean visit(Node node) {
+  public boolean startVisit(Node node) {
     if (node instanceof CompilationUnit) {
       context.setCompilationUnit((CompilationUnit) node);
       return true;

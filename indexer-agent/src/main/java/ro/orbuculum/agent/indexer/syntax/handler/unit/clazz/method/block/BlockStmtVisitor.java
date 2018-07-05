@@ -39,7 +39,7 @@ public class BlockStmtVisitor implements Visitor {
 		this.context = context;
 	}
 	@Override
-	public boolean visit(Node node) {
+	public boolean startVisit(Node node) {
 		return node instanceof BlockStmt;
 	}
 

@@ -41,7 +41,7 @@ public class ExpressionStmtVisitor implements Visitor {
 	}
 	
 	@Override
-	public boolean visit(Node node) {
+	public boolean startVisit(Node node) {
 		return node instanceof ExpressionStmt;
 	}
 

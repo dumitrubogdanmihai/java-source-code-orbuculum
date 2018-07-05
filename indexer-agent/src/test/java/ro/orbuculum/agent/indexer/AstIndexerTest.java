@@ -44,6 +44,21 @@ public class AstIndexerTest {
     assertEquals("method-call=org.junit.Assert.assertTrue", documentsToIndex.get(0).getField("method-call").toString());
   }
 
+  
+  /**
+   * Test the indexer against a class with method calls.
+   * 
+   * @throws SolrServerException
+   * @throws IOException
+   */
+  @Test
+  public void testKeywords() throws SolrServerException, IOException {
+    List<SolrInputDocument> documentsToIndex = VisitorSpyUtil.getDocumentsToIndex(
+        new File("src/test/java/ro/orbuculum/agent/sample/Keywords.java"), 1);
+    assertEquals("method=method0", documentsToIndex.get(0).getField("keywords").toString());
+    assertEquals("method-call=org.junit.Assert.assertTrue", documentsToIndex.get(0).getField("method-call").toString());
+  }
+
   /**
    * Assert that the class names are resolved.
    * 

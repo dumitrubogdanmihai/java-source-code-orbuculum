@@ -13,6 +13,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
 import ro.orbuculum.agent.indexer.syntax.handler.Context;
+import ro.orbuculum.agent.indexer.syntax.handler.Context.X;
 import ro.orbuculum.agent.indexer.syntax.handler.Visitor;
 import ro.orbuculum.agent.indexer.syntax.handler.fs.FsAccess;
 import ro.orbuculum.agent.indexer.syntax.handler.unit.CompilationUnitVisitor;
@@ -87,6 +88,7 @@ public class AstIndexer {
     Context context = new Context(this.solr, project, javaResourcePath, fsAccess);
     CompilationUnitVisitor rootHandler = new CompilationUnitVisitor(context);
     index(unit, Arrays.asList(rootHandler));
+    X x;
   }
 
   /**
@@ -118,7 +120,7 @@ public class AstIndexer {
     if (visitors != null && ! visitors.isEmpty()) {
       for (Visitor visitor : visitors) {
         // The node can be consumed.
-        if (visitor.visit(node)) {
+        if (visitor.startVisit(node)) {
           // First apply children visitors that may contribute to the
           // document that the parent visitor will push to Solr index. 
           for (Node child : node.getChildrenNodes()) {
@@ -126,7 +128,7 @@ public class AstIndexer {
             index(child, childrenVisitors);
           }
           // Update the index.
-          visitor.commit();			
+          visitor.endVisit();
         }
       }
     }

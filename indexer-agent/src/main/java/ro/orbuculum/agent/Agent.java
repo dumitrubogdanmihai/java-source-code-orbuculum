@@ -1,8 +1,11 @@
 package ro.orbuculum.agent;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -27,6 +30,13 @@ import ro.orbuculum.agent.indexer.syntax.AstIndexer;
  * @author bogdan
  */
 public class Agent {
+  
+  public static void main(String[] args) throws IOException {
+    Agent agent = new Agent(new AstIndexer());
+    agent.startTrackingRepository("dumitrubogdanmihai/java-source-code-orbuculum");
+    agent.updateIndex();
+  }
+  
   /**
    * Logger.
    */
@@ -61,31 +71,26 @@ public class Agent {
    * Constructor.
    * 
    * @param indexer Used to parse raw java files.
+   * @throws IOException 
    */
   public Agent(AstIndexer indexer) {
     Parser parser = new Parser();
     this.githubSparseIndexer = new GithubSparseIndexer(parser, indexer);
     this.githubIndexer = new GithubGrossIndexer(parser, indexer);
     this.timer = new Timer();
-  }
-
-  /**
-   * Give access to Github repositories.
-   * 
-   * @param oauthAccessToken  Token.
-   * https://help.github.com/articles/git-automation-with-oauth-tokens/
-   * 
-   * @throws IOException
-   */
-  public void setAuthToken(String oauthAccessToken) throws IOException {
-    github = GitHub.connectUsingOAuth(oauthAccessToken);
+    
+    try {
+      github = GitHub.connectUsingPassword("dumitrumihaibogdan@gmail.com", "XXX");
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     timer.scheduleAtFixedRate(
         new TimerTask() {
           @Override
           public void run() {
             Agent.this.updateIndex();
           }
-        }, 2000, 2000);
+        }, 0, 600000);// 10 minutes
   }
 
   /**
@@ -96,6 +101,24 @@ public class Agent {
    */
   public void startTrackingRepository(String repo) {
     ledger.put(repo, null);
+  }
+
+  /**
+   * @return authenticated user's email.
+   */
+  public Optional<String> getAuthorizedEmail() {
+    try {
+      return Optional.of(github.getMyself().getEmail());
+    } catch (Exception e) {
+      return Optional.empty();
+    }
+  }
+
+  /**
+   * @return tracked repositories list.
+   */
+  public List<String> getTrackedRepositories() {
+    return new ArrayList<>(ledger.keySet());
   }
 
   /**
@@ -118,6 +141,7 @@ public class Agent {
           sha1 = githubSparseIndexer.indexSince(lastSha1Indexer, repo);
         } else {
           sha1 = githubIndexer.indexWhole(repo);
+//          repo.getBlob("");
         }
         ledger.put(repoName, sha1);
       }

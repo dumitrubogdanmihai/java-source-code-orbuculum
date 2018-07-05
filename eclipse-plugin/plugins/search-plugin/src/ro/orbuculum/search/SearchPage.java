@@ -66,7 +66,7 @@ public class SearchPage implements ISearchPage {
 
 	@Override
 	public boolean performAction() {
-	  System.err.println("performAction");
+	  System.err.println("performAction" + projectCombo.getSelectionIndex());
 	  String selectedProject = (projectCombo.getSelectionIndex() == -1 ? null : projectCombo.getText());
 	  String rawMethodQuery = methodQueryText.getText();
 		SearchQuery searchQuery = new SearchQuery(rawMethodQuery, selectedProject);

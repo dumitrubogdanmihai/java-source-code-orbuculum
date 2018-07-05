@@ -14,6 +14,10 @@ import ro.orbuculum.agent.indexer.syntax.handler.fs.FsAccess;
  * @author bogdan
  */
 public class Context {
+  public static class X
+  {
+    
+  }
 	/**
 	 * Java source file.
 	 */

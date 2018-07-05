@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.Test;
 
 import retrofit2.Response;
-import ro.orbuculum.indexer.Indexer;
+import ro.orbuculum.indexer.Api;
 import ro.orbuculum.indexer.IndexerAgentApi;
 import ro.orbuculum.search.SearchQuery;
 import ro.orbuculum.search.SearchResult;
@@ -36,7 +36,7 @@ public class TestSearchQuery {
    */
   @Test
   public void testEmptyQuery() throws IOException {
-    IndexerAgentApi restApi = new Indexer().getRestApi();
+    IndexerAgentApi restApi = new Api().getRestApi();
     String path = new File("src/test/resources/TestSearchQuery/testEmptyQuery/project-dir")
         .getCanonicalPath();
     Response<Void> request = restApi.index(path).execute();

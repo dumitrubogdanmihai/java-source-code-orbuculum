@@ -5,7 +5,7 @@ import java.util.List;
 import com.github.javaparser.ast.Node;
 
 public interface Visitor {
-	boolean visit(Node node);
+	boolean startVisit(Node node);
 	List<Visitor> getChildrenVisitors();
-	default void commit() {}
+	default void endVisit() {}
 }
