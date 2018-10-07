@@ -86,6 +86,7 @@ public class Api {
    * @throws IOException
    */
   public void indexJavaProjects() throws CoreException, IOException {
+	  System.out.println("indexJavaProjects:");
     IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
     for (IProject project : workspaceRoot.getProjects()) {
       if (project.isOpen() && project.hasNature(JavaCore.NATURE_ID)) {
@@ -140,5 +141,19 @@ public class Api {
    */
   public IndexerAgentApi getRestApi() {
     return restApi;
+  }
+  
+  public void startTrackingRepo(String repo) {
+	  this.restApi.startTrackingRepository(repo).enqueue(new Callback<Void>() {
+		@Override
+		public void onResponse(Call<Void> call, Response<Void> response) {
+			System.out.println("Start tracking " + repo + ": " + response.isSuccessful() + " " + response.message());
+		}
+
+		@Override
+		public void onFailure(Call<Void> call, Throwable t) {
+			System.err.println("Start tracking failed for " + repo + " " + call);
+		}
+	});;
   }
 }

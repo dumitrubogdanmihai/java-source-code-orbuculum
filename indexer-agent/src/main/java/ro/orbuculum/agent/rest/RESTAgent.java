@@ -55,6 +55,7 @@ public class RESTAgent {
   @Path("startTrackingRepository")
   public Response startTrackingRepositoryGet(
       @QueryParam("repo") String repo) {
+	  System.err.println("startTrackingRepository  " + repo);
     agent.startTrackingRepository(repo);
     return Response.ok().build();
   }

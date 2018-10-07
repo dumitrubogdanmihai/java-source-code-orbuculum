@@ -1,9 +1,11 @@
 #!/bin/bash
 # Those commands must be executed with the server running and, because of that, the image cannot be built with just a Dockerfile.
 
-#docker-compose up -d orbuculum
+#echo "Don't forget to start container first. This ca be done execuing \"docker-compose up -d orbuculum\""
+docker-compose stop orbuculum
+docker-compose up -d orbuculum
 
-#sleep 7
+sleep 10
 docker-compose exec -T orbuculum bash /opt/solr/bin/solr delete -c orbuculum
 sleep 2
 docker-compose exec -T orbuculum bash /opt/solr/bin/solr create -c orbuculum

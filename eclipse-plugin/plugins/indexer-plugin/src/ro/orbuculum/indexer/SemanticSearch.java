@@ -89,18 +89,35 @@ public class SemanticSearch extends ViewPart {
         }
       });
       Label label = new Label(composite, SWT.NONE);
-      label.setText("Index all.");
+      label.setText("Index all (development only).");
     }
 
     {
       Button trackRepo = new Button(composite, SWT.PUSH);
       trackRepo.setText("Track repo");
-//TODO:action...
+
       Text repoText = new Text(composite, SWT.NONE);
       repoText.setText("repositoryName");
+      
+
+      trackRepo.addMouseListener(new MouseListener() {
+        @Override
+        public void mouseUp(MouseEvent arg0) {
+        	System.out.println("Track: " + repoText.getText());
+        	api.startTrackingRepo(repoText.getText());
+        }
+
+        @Override
+        public void mouseDown(MouseEvent arg0) {
+        }
+
+        @Override
+        public void mouseDoubleClick(MouseEvent arg0) {
+        }
+      });
     }
     
-    {
+    {/*
       Button button = new Button(composite, SWT.PUSH);
       button.setText("Set auth token");
 
@@ -137,16 +154,16 @@ public class SemanticSearch extends ViewPart {
         public void mouseDoubleClick(MouseEvent arg0) {
         }
       });
-    }
+    */}
 
-    {
+    {/*
       Label labelEmail = new Label(composite, SWT.NONE);
       labelEmail.setText("Email:");
 
       labelEmailLabel = new Label(composite, SWT.NONE);
       labelEmailLabel.setText("pending...");
       updateLabelEmailLabel();
-    }
+    */}
 
     {
       Label labelReposLabel = new Label(composite, SWT.NONE);

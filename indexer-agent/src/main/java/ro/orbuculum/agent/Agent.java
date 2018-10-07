@@ -80,7 +80,7 @@ public class Agent {
     this.timer = new Timer();
     
     try {
-      github = GitHub.connectUsingPassword("dumitrumihaibogdan@gmail.com", "XXX");
+      github = GitHub.connectUsingPassword("testdumitrumihaibogdan@gmail.com", "test1!@#$%^&*()");
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -100,7 +100,9 @@ public class Agent {
    * @param repo
    */
   public void startTrackingRepository(String repo) {
+	logger.info("startTrackingRepository:" + repo);
     ledger.put(repo, null);
+    updateIndex();
   }
 
   /**
@@ -124,7 +126,7 @@ public class Agent {
   /**
    * Update Solr index accordingly to the ledger.
    */
-  private void updateIndex() {
+  private synchronized void updateIndex() {
     for (String repoName : ledger.keySet()) {
       String lastSha1Indexer = ledger.get(repoName);
 
